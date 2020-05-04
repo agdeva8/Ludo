@@ -7,7 +7,7 @@ public class CenterPeice {
     private static GameObject centerPeice;
     private static string centerPeiceName = "CenterPeice";
     private static Mesh mesh;
-    private static Vector3[] vertices;
+    private static List<Vector3> vertices;
     private static List<int> triangles;
     // private static int[] triangles;
 
@@ -38,51 +38,28 @@ public class CenterPeice {
         float height = cellScale[1] * pixPerScale; 
         float depth = cellScale[2] * pixPerScale * 3; 
 
-        // vertices = new Vector3[] {
-        //     // This is Base
-        //     new Vector3(0, 0, 0), 
-        //     new Vector3(0, 0, depth), 
-        //     new Vector3(width, 0, depth), 
-        //     new Vector3(width, 0, 0), 
-
-        //     // This is Top
-        //     new Vector3(0, height, 0), 
-        //     new Vector3(0, height, depth), 
-        //     new Vector3(width, height, depth), 
-        //     new Vector3(width, height, 0)
-        // };
-
-        // triangles = new int[] {
-        //     // Bottom Face
-        //     0, 1, 2,
-        //     2, 3, 0,
-
-        //     // Top Face
-        //     4, 5, 6,
-        //     6, 7, 4
-        // };
-        
-        int n = 4;
-        vertices = PolygonPoints(n, 3, 2, 0, 0).ToArray();
-
+        int n = 7;
+        vertices = PolygonPoints(n, 3, 2, 0, 0);
+        vertices.AddRange(PolygonPoints(n, 3, (int)height, 0, 0));
         // 0 index contains center
 
         triangles = new List<int>();
-        // triangles.AddRange(new List<int>() {0, 1, 2});
-        // triangles.AddRange(new List<int>() {0, 3, 4});
-        for (int i = 1; i <= n; i++) {
-            triangles.AddRange(new List<int>() {0, i, (i) % (n) + 1});
-            Debug.Log(i);
-            Debug.Log((i + 1) % (n + 1));
-        }
-        // triangles.AddRange(new List<int>() {0, 0, 4});
-        // triangles.AddRange(new List<int>() {0, 1, 2});
-        // Debug.Log(vertices[0]);
-        // Debug.Log(vertices[1]);
-        // Debug.Log(vertices[2]);
-        // Debug.Log(vertices[3]);
-        // Debug.Log(vertices[4]);
 
+        // let h represents adding heights
+        // so that for h objects can be called by adding n
+        for (int i = 1; i <= n; i++) {
+            int p1 = i;
+            int p2 = i % n + 1;
+
+            // Adding Base
+            triangles.AddRange(new List<int>() {0, p1, p2});
+
+            // Adding Top
+            triangles.AddRange(new List<int>() {n + 1, p1 + n + 1, p2 + n + 1});
+
+            List<int> trList = new List<int>() {p1, p2, p2 + n + 1, p1 + n + 1}; 
+            triangles.AddRange(SqPoints2TrPoints(trList));
+        }
         updateMesh();
     }
 
@@ -104,16 +81,19 @@ public class CenterPeice {
         
         return polygonPoints;
     }
-    // // sqList must be clockwise for it to work
-    // private static List<int> SqPoints2TrPonints(List<int> sqList) {
-    //     List<int> trList = new List<int>();
-    //     trList.AddRange(new List<int>() { sqList[0], sqList[1], sqList[2]}); 
-    //     trList.AddRange(new List<int>() { sqList[2], sqList[3], sqList[0]}); 
-    // // }
+    
+    // sqList must be clockwise for it to work
+    private static List<int> SqPoints2TrPoints(List<int> sqList) {
+        List<int> trList = new List<int>();
+        trList.AddRange(new List<int>() { sqList[0], sqList[1], sqList[2]}); 
+        trList.AddRange(new List<int>() { sqList[2], sqList[3], sqList[0]}); 
+
+        return trList;
+    }
 
     private static void updateMesh() {
         mesh.Clear();
-        mesh.vertices = vertices;
+        mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
     }
 }
