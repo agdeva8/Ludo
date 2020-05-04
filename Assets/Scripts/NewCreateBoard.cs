@@ -1,17 +1,16 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 public class NewCreateBoard { 
     // Start is called before the first frame update
-    private static int numRows = 6;
-    private static int numCols = 3;
-    private static GameObject fatherCell = GameObject.Find("Cells");
+    private static int numRows = 19;
+    private static int numCols = 19;
+    
+    private static GameObject fatherCell = new GameObject();
 
-    // private static Vector3 cellScale = 
-    //                     Resources.Load<GameObject>("PreFabs/Cells").transform.localScale;
+    private static Vector3 cellScale = 
+                        Resources.Load<GameObject>("PreFabs/Cell").transform.localScale;
 
-    private static Vector3 cellScale = new Vector3(1, 1, 1);
     [MenuItem("Tools/CreateGrid")]
     public static void createGrid() {
         GameObject myFirstCell = (GameObject)GameObject.Instantiate(Resources.Load("PreFabs/Cell"),
