@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 
+[RequireComponent(typeof(MeshFilter))]
 public class CenterPeice {
     // private static GameObject centerPeice = GameObject.Find("CenterPeice");
     private static GameObject centerPeice;
@@ -11,7 +12,8 @@ public class CenterPeice {
     private static List<int> triangles;
     // private static int[] triangles;
 
-    private static Vector3 cellScale = Resources.Load<GameObject>("PreFabs/Cell").transform.localScale;
+    // private static Vector3 cellScale = Resources.Load<GameObject>("PreFabs/Cell").transform.localScale;
+    private static Vector3 cellScale = new Vector3(0, 0, 0);
     private static int pixPerScale = 1;
 
     [MenuItem("Tools/CenterPeice")]
@@ -25,8 +27,10 @@ public class CenterPeice {
         mesh = new Mesh();
         
         centerPeice.name = centerPeiceName;
-        centerPeice.AddComponent<MeshFilter>().mesh = mesh;    
-        centerPeice.AddComponent<MeshRenderer>();
+        MeshFilter centerPeiceMF = centerPeice.AddComponent<MeshFilter>(); 
+        MeshRenderer centerPeiceMR = centerPeice.AddComponent<MeshRenderer>();
+        
+        centerPeiceMF.sharedMesh = mesh;
         // centerPeice.GetComponent<MeshFilter>().mesh = mesh;
         CreateShape();
     }
@@ -38,9 +42,9 @@ public class CenterPeice {
         float height = cellScale[1] * pixPerScale; 
         float depth = cellScale[2] * pixPerScale * 3; 
 
-        int n = 7;
-        vertices = PolygonPoints(n, 3, 2, 0, 0);
-        vertices.AddRange(PolygonPoints(n, 3, (int)height, 0, 0));
+        int n = 4;
+        vertices = PolygonPoints(n, 3, 0, 0, 0);
+        // vertices.AddRange(PolygonPoints(n, 3, (int)height, 0, 0));
         // 0 index contains center
 
         triangles = new List<int>();
@@ -54,11 +58,12 @@ public class CenterPeice {
             // Adding Base
             triangles.AddRange(new List<int>() {0, p1, p2});
 
-            // Adding Top
-            triangles.AddRange(new List<int>() {n + 1, p1 + n + 1, p2 + n + 1});
+            // // Adding Top
+            // triangles.AddRange(new List<int>() {n + 1, p1 + n + 1, p2 + n + 1});
 
-            List<int> trList = new List<int>() {p1, p2, p2 + n + 1, p1 + n + 1}; 
-            triangles.AddRange(SqPoints2TrPoints(trList));
+            // List<int> trList = new List<int>() {p1, p2, p2 + n + 1, p1 + n + 1}; 
+            // triangles.AddRange(SqPoints2TrPoints(trList));
+
         }
         updateMesh();
     }
@@ -92,8 +97,9 @@ public class CenterPeice {
     }
 
     private static void updateMesh() {
-        mesh.Clear();
+        // mesh.Clear();
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
+        mesh.RecalculateNormals();
     }
 }
