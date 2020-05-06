@@ -8,27 +8,63 @@ public class CreateBoard {
     private static float a = 1;
     private static int n = 8;
     private static float theta = (360 / n);
-private static Vector3 cellScale = new Vector3(1, 1, 1);
+    private static List<GameObject[,]> Cells;
+    private static Vector3 cellScale;
+    private static List<Color> playerColors;
 
     [MenuItem("Tools/Create Board")]
-    public static void createRect() {
-        
-        GameObject[] rectParents = new GameObject[n];
-        // GameObject firstCube = InstNewCell(6, 0, 0);
-        // GameObject secCube = InstNewCell(1, 0, 0, firstCube);
-        // secCube.transform.localPosition = new Vector3(1, 0, 0);
-        // secCube.transform.parent = firstCube.transform;
-        // secCube.transform.position = new Vector3(1, 0, 0);
-        // GameObject[,] Cells = CreateGrid(6, 3, firstCube);
-        // GameObject.DestroyImmediate(Cells[0, 0]);
-        // Cells[0, 0] = firstCube;
+    public static void Main() {
+        Cells = new List<GameObject[,]>();
+        cellScale = new Vector3(1, 1, 1);
+        CreateRect();
+        CreateCenter();
+        playerColors = new List<Color>() {
+            Color.white,
+            Color.yellow,
+            Color.blue,
+            Color.red,
+            Color.green,
+            Color.black,
+            Color.magenta,
+            Color.cyan
+        };
 
-        List<GameObject[,]> Cells = new List<GameObject[,]>();
+        SetBasicColor();
+    }
+    
+    // [MenuItem("Tools/Check Feature")]
+    public static void SetBasicColor() {
+        for (int player= 0; player < n; player++) {
+            for (int i = 0; i < 5; i++)
+                changeColor(Cells[player][1, i], playerColors[player]);
+            changeColor(Cells[player][2, 4], playerColors[player]);
+        }
+    } 
+
+    private static void changeColor(GameObject obj, Color color) {
+        var cubeRenderer = obj.GetComponent<Renderer>();
+        cubeRenderer.material.SetColor("_Color", color);
+    }
+
+    public static void CreateCenter() {
+        Vector3 centerPos = Cells[(int)(n / 2)][1, 0].transform.position +  
+                            Cells[0][1, 0].transform.position;
+
+        centerPos = centerPos / 2;
+        Debug.Log(Cells[(int)(n / 2)][1, 0].transform.position); 
+
+        GameObject centerPeice = (GameObject)GameObject.Instantiate(Resources.Load("PreFabs/Hexagon"),
+                                        centerPos,
+                                        Quaternion.identity);
+    }
+
+    public static void CreateRect() {
+        GameObject[] rectParents = new GameObject[n];
+
         for (int i = 0; i < n; i++) {
             rectParents[i] = new GameObject("Rect Parent " + i.ToString());
             if (i >= 1) {
                 rectParents[i].transform.parent = rectParents[i - 1].transform;
-                // rectParents[i].transform.Rotate(new Vector3(0, 45, 0));
             }
 
             rectParents[i].transform.localPosition = new Vector3(3 * a, 0, 0);
@@ -38,58 +74,6 @@ private static Vector3 cellScale = new Vector3(1, 1, 1);
                 rectParents[i].transform.localRotation = Quaternion.Euler(0, theta, 0);
             }
         }
-
-        // GameObject c1 = InstNewCell(0, 0, 0);
-        // GameObject c2 = InstNewCell(0, 0, 0);
-
-        // float theta = Mathf.PI / 4;
-
-        // // c1.transform.Translate(new Vector3(-a, 0, 0));
-        // // GameObject c2Parent = InstNewCell(a / 2, 0, a / 2);
-        // // GameObject c2Parent = new GameObject();
-        // // c2Parent.transform.Translate(new Vector3(a / 2, 0, a / 2));
-        // // c2Parent.transform.Rotate(new Vector3(0, 45, 0));
-        // // c2.transform.SetParent(c2Parent.transform);
-        
-        // c2.transform.Translate(new Vector3(1, 0, 0));
-
-        // SetPivot setPivot = new SetPivot();
-        // setPivot.p = new Vector3(-1.0f, 0.0f, 1.0f);
-        // setPivot.SetPivotObject(c2);
-        // setPivot.UpdatePivot();
-
-        // Vector3 cornerVertex = new Vector3(1, 0, 0);
-        // c2.transform.Translate(cornerVertex);
-        // c2.transform.RotateAround(new Vector3(0, 0, 0), new Vector3(0f, 1f, 0f), 90);
-
-        // c2.transform.Rotate(new Vector3(0, 45, 0));
-
-        // // float dx = a * Mathf.Sin(theta); 
-        // // c2.transform.Translate(new Vector3(1 + dx, 0, 0));
-
-        // Vector3 newPoint = FindPointLDist(new Vector3(-Mathf.Sin(theta), 0, Mathf.Cos(theta)), Mathf.Tan(theta), a / 2);
-        // float dx = Mathf.Abs(-a / 2 - newPoint[0]);
-        // float dy = Mathf.Abs(-a / 2 - newPoint[2]);
-
-        // c2.transform.Translate(new Vector3(1 + dx, 0, dy));
-        
-        // GameObject firstCube = InstNewCell(0, 0, 0);
-        // GameObject[,] Cells = CreateGrid(6, 3, firstCube);
-        // GameObject.DestroyImmediate(Cells[0, 0]);
-        // Cells[0, 0] = firstCube;
-        
-        // List<Vector3> vertices = CenterPeice.PolygonPoints(n, 3 * a, 0, 0, 0);
-
-        // Debug.Log(vertices[1] + "\t" + vertices[2]);
-
-        // float m = GetSlope(vertices[1], vertices[2]);
-
-        // Debug.Log("m = " + m);
-        // Vector3 intermediateVertex = FindPointLDist(vertices[1], m, a / 2); 
-        // Vector3 firstCubeCenter = FindPointLDist(intermediateVertex, (-1 / m), a / 2); 
-
-        // GameObject firstCell = InstNewCell(firstCubeCenter);
-        // InstNewCell(vertices[2]);
     }
 
     

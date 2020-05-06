@@ -5,6 +5,8 @@ using UnityEditor;
 [RequireComponent(typeof(MeshFilter))]
 public class CenterPeice {
     // private static GameObject centerPeice = GameObject.Find("CenterPeice");
+
+    private static int n = 8;
     private static GameObject centerPeice;
     private static string centerPeiceName = "CenterPeice";
     private static Mesh mesh;
@@ -13,7 +15,7 @@ public class CenterPeice {
     // private static int[] triangles;
 
     // private static Vector3 cellScale = Resources.Load<GameObject>("PreFabs/Cell").transform.localScale;
-    private static Vector3 cellScale = new Vector3(0, 0, 0);
+    private static Vector3 cellScale = new Vector3(1, 1, 1);
     private static int pixPerScale = 1;
 
     [MenuItem("Tools/CenterPeice")]
@@ -33,6 +35,8 @@ public class CenterPeice {
         centerPeiceMF.sharedMesh = mesh;
         // centerPeice.GetComponent<MeshFilter>().mesh = mesh;
         CreateShape();
+
+        centerPeice.transform.localScale = new Vector3(1.2f, 0.0f, 1.2f);
     }
 
     private static void CreateShape() {
@@ -42,8 +46,8 @@ public class CenterPeice {
         float height = cellScale[1] * pixPerScale; 
         float depth = cellScale[2] * pixPerScale * 3; 
 
-        int n = 4;
-        vertices = PolygonPoints(n, 3, 0, 0, 0);
+        vertices = PolygonPoints(n, 3, height, 0, 0);
+        Debug.Log(vertices[1].y);
         // vertices.AddRange(PolygonPoints(n, 3, (int)height, 0, 0));
         // 0 index contains center
 
