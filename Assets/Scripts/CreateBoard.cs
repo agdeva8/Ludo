@@ -12,12 +12,15 @@ public class CreateBoard {
     private static Vector3 cellScale;
     private static List<Color> playerColors;
     private static List<GameObject> stopPointCubes;
+    private static GameObject[] playerPeices;
 
     [MenuItem("Tools/Create Board")]
     public static void Main() {
         Cells = new List<GameObject[,]>();
         stopPointCubes = new List<GameObject>();
         cellScale = new Vector3(1, 1, 1);
+        playerPeices = new GameObject[n];
+
         CreateRect();
         CreateCenter();
         playerColors = new List<Color>() {
@@ -33,6 +36,21 @@ public class CreateBoard {
 
         SetBasicColor();
         AddStopPoints();
+        placePeicesStart();
+    }
+
+    private static void placePeicesStart() {
+        for (int player = 0; player < n; player++) {
+            playerPeices[player] = placePeice(Cells[player][2, 4]);
+            changeColor(playerPeices[player], playerColors[player]);
+        }
+    }
+
+    private static GameObject placePeice(GameObject parent) {
+        GameObject playerPeice = InstObj(new Vector3(0, 0.5f, 0), "PreFabs/PlayerPeice", parent);
+        playerPeice.transform.localPosition = new Vector3(0, 0.5f, 0); 
+        playerPeice.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+        return playerPeice;
     }
     
     private static void AddStopPoints() {
