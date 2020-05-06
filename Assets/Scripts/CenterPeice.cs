@@ -12,7 +12,6 @@ public class CenterPeice {
     private static Mesh mesh;
     private static List<Vector3> vertices;
     private static List<int> triangles;
-    // private static int[] triangles;
 
     // private static Vector3 cellScale = Resources.Load<GameObject>("PreFabs/Cell").transform.localScale;
     private static Vector3 cellScale = new Vector3(1, 1, 1);
