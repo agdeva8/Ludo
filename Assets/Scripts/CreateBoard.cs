@@ -14,6 +14,8 @@ public class CreateBoard {
     private static List<Color> playerColors;
     private static List<GameObject> stopPointCubes;
     private static GameObject[] playerPeices;
+    private static List<GameObject> centerPeices;
+    private static GameObject centerPeiceParent;
 
     [MenuItem("Tools/Create Board")]
     public static void Main() {
@@ -45,7 +47,15 @@ public class CreateBoard {
     private static void createCenterPeice() {
         Vector3 centerPos = getCenterPos();
 
-        List<GameObject> centerPeices = new List<GameObject>();
+        centerPeiceParent = new GameObject("Center Peice");
+        centerPeiceParent.transform.position = centerPos;
+
+        GameObject outPP = new GameObject("Out Parent");
+        outPP.transform.parent = centerPeiceParent.transform;
+        GameObject outParent = new GameObject("Out Peice");
+        outParent.transform.parent = outPP.transform;
+
+        centerPeices = new List<GameObject>();
         for (int player = 0; player < n; player++) {
             List<Vector3> vertices = new List<Vector3>();
             List<int> triangles = new List<int>();
@@ -58,7 +68,8 @@ public class CreateBoard {
                 vertices[i] =  new Vector3(vertices[i].x, 0.5f, vertices[i].z);
             }
 
-            GameObject centerPeice = new GameObject("Center Player " + player);
+            GameObject centerPeice = new GameObject("Peice " + player);
+            centerPeice.transform.parent = outParent.transform;
             MeshFilter centerPeiceMF = centerPeice.AddComponent<MeshFilter>(); 
             MeshRenderer centerPeiceMR = centerPeice.AddComponent<MeshRenderer>();
 
@@ -78,6 +89,21 @@ public class CreateBoard {
             // Addding to the list of center peices
             centerPeices.Add(centerPeice);
         }
+
+            // create inside center Peice 
+            GameObject inPP = new GameObject("In Parent");
+            inPP.transform.parent = centerPeiceParent.transform; 
+            inPP.transform.position = centerPos;
+            GameObject inParent = GameObject.Instantiate(outParent);
+            inParent.name = "In Peice";
+            inParent.transform.parent = inPP.transform;
+            inParent.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+
+            inPP.transform.localScale = new Vector3(0.5f, 0.2f, 0.5f);
+
+            MeshRenderer[] inChildrenMR = inParent.GetComponentsInChildren<MeshRenderer>();
+            for (int i = 0; i < inChildrenMR.Length; i++)
+                inChildrenMR[i].material = (Material)Resources.Load("Material/InCenter");
     }
 
     private static Vector3 getCenterPos() {
