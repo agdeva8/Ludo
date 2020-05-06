@@ -11,10 +11,12 @@ public class CreateBoard {
     private static List<GameObject[,]> Cells;
     private static Vector3 cellScale;
     private static List<Color> playerColors;
+    private static List<GameObject> stopPointCubes;
 
     [MenuItem("Tools/Create Board")]
     public static void Main() {
         Cells = new List<GameObject[,]>();
+        stopPointCubes = new List<GameObject>();
         cellScale = new Vector3(1, 1, 1);
         CreateRect();
         CreateCenter();
@@ -30,10 +32,26 @@ public class CreateBoard {
         };
 
         SetBasicColor();
+        AddStopPoints();
     }
     
-    // [MenuItem("Tools/Check Feature")]
-    public static void SetBasicColor() {
+    private static void AddStopPoints() {
+        for (int player = 0; player < n; player++) {
+            PlaceStopCube(player, 0, 3);
+            PlaceStopCube(player, 2, 4);
+        }
+    }
+
+    private static void PlaceStopCube(int player, int r, int c) {
+        GameObject parent = Cells[player][r, c];
+        GameObject stopPointCube = InstObj(new Vector3(0, 0, 0), "PreFabs/StopCube", parent); 
+        stopPointCube.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+        stopPointCube.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+
+        stopPointCubes.Add(stopPointCube);
+    }
+
+    private static void SetBasicColor(){
         for (int player= 0; player < n; player++) {
             for (int i = 0; i < 5; i++)
                 changeColor(Cells[player][1, i], playerColors[player]);
@@ -93,6 +111,22 @@ public class CreateBoard {
         }
 
         return Cells;
+    }
+
+    private static GameObject InstObj(Vector3 point, string obj, GameObject parent = null) { 
+        GameObject newObj;
+
+        if (parent == null) {
+            newObj = (GameObject)GameObject.Instantiate(Resources.Load(obj),
+                                        point,
+                                        Quaternion.identity);
+        }
+        else {
+            newObj = (GameObject)GameObject.Instantiate(Resources.Load(obj),
+                                        point,
+                                        Quaternion.identity, parent.transform);
+        }
+        return newObj;
     }
 
     private static GameObject InstNewCell(float x, float y, float z, GameObject parent = null) { 
