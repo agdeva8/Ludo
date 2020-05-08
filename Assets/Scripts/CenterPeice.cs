@@ -28,10 +28,10 @@ public class CenterPeice {
         mesh = new Mesh();
         
         centerPeice.name = centerPeiceName;
-        MeshFilter centerPeiceMF = centerPeice.AddComponent<MeshFilter>(); 
-        MeshRenderer centerPeiceMR = centerPeice.AddComponent<MeshRenderer>();
+        MeshFilter centerPeiceMf = centerPeice.AddComponent<MeshFilter>(); 
+        MeshRenderer centerPeiceMr = centerPeice.AddComponent<MeshRenderer>();
         
-        centerPeiceMF.sharedMesh = mesh;
+        centerPeiceMf.sharedMesh = mesh;
         // centerPeice.GetComponent<MeshFilter>().mesh = mesh;
         CreateShape();
 
@@ -68,7 +68,7 @@ public class CenterPeice {
             // triangles.AddRange(SqPoints2TrPoints(trList));
 
         }
-        updateMesh();
+        UpdateMesh();
     }
 
     // x and y are centers
@@ -99,7 +99,7 @@ public class CenterPeice {
         return trList;
     }
 
-    private static void updateMesh() {
+    private static void UpdateMesh() {
         // mesh.Clear();
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
