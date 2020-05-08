@@ -16,6 +16,7 @@ public class CreateBoard {
     private static List<Color> playerColors;
     private static List<GameObject> stopPointCubes;
     private static GameObject[] playerPieces;
+    private static GameObject playerPiecesParent;
     private static List<GameObject> centerPieces;
     private static GameObject centerPieceParent;
     
@@ -46,18 +47,29 @@ public class CreateBoard {
         PlacePiecesStart();
         CreateCenterPiece();
         // CheckMetaData();
+        RelateCells();
     }
 
     // Check Whether Meta Data concept is working or not 
     // For now its true;
 
-    private static void RelateCellObjets() {
-        // for (int playerI = 0; playerI < n; playerI++) {
-        //    for (int i = 0; i < ) 
-
-        // for not checking only for 1 player rec strip from home
-        int playerI = 0;
-        GameObject currCell = cells[0][2, 4];
+    private static void RelateCells()
+    {
+        // cells[0][2, 4].GetComponent<CellMetaData>().SetNextGameObj(cells[0][2, 3]);
+        // cells[0][2, 4].GetComponent<CellMetaData>()._nextObjOtherPlayer = cells[0][2, 3];
+        for (int player = 0; player < n; player++)
+        {
+            for (int i = 5; i > 0; i--)
+                cells[player][2, i].GetComponent<CellMetaData>().SetNextGameObj(cells[player][2, i - 1]);
+            cells[player][2, 0].GetComponent<CellMetaData>().SetNextGameObj(cells[(player + 1) % n][0, 0]); 
+            //
+            for (int i = 0; i < 5; i++)
+                cells[player][0, i].GetComponent<CellMetaData>().SetNextGameObj(cells[player][0, i + 1]);
+            cells[player][0, 5].GetComponent<CellMetaData>().SetNextGameObj(cells[player][1, 5]); 
+            //
+            cells[player][1, 5].GetComponent<CellMetaData>().SetNextGameObj(cells[player][2, 5]); 
+        }
+        
     }
 
     // Move Piece using menu bar option
@@ -95,7 +107,7 @@ public class CreateBoard {
         GameObject nextCell = GameObject.Find("C2");
         GameObject player = GameObject.Find("P1");
 
-        PlacePeice(player, currCell);
+        player.transform.position = NewPiecePostion(currCell);
     } 
     
     // moving player one step ahead
@@ -156,20 +168,20 @@ public class CreateBoard {
             centerPieces.Add(centerPeice);
         }
 
-            // create inside center Piece 
-            GameObject inPp = new GameObject("In Parent");
-            inPp.transform.parent = centerPieceParent.transform; 
-            inPp.transform.position = centerPos;
-            GameObject inParent = GameObject.Instantiate(outParent);
-            inParent.name = "In Peice";
-            inParent.transform.parent = inPp.transform;
-            inParent.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+        // create inside center Piece 
+        GameObject inPp = new GameObject("In Parent");
+        inPp.transform.parent = centerPieceParent.transform; 
+        inPp.transform.position = centerPos;
+        GameObject inParent = GameObject.Instantiate(outParent);
+        inParent.name = "In Peice";
+        inParent.transform.parent = inPp.transform;
+        inParent.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
 
-            inPp.transform.localScale = new Vector3(0.5f, 0.2f, 0.5f);
+        inPp.transform.localScale = new Vector3(0.5f, 0.2f, 0.5f);
 
-            MeshRenderer[] inChildrenMr = inParent.GetComponentsInChildren<MeshRenderer>();
-            for (int i = 0; i < inChildrenMr.Length; i++)
-                inChildrenMr[i].material = (Material)Resources.Load("Material/InCenter");
+        MeshRenderer[] inChildrenMr = inParent.GetComponentsInChildren<MeshRenderer>();
+        for (int i = 0; i < inChildrenMr.Length; i++)
+            inChildrenMr[i].material = (Material)Resources.Load("Material/InCenter");
     }
 
     private static Vector3 GetCenterPos() {
@@ -180,7 +192,7 @@ public class CreateBoard {
         return centerPos;
     }
 
-    public static Vector3 NewPeicePostion(GameObject cell) {
+    public static Vector3 NewPiecePostion(GameObject cell) {
         Vector3 retPosition = cell.transform.position;
         retPosition.y = retPosition.y + 0.5f;
 
@@ -188,23 +200,38 @@ public class CreateBoard {
     }
     
     private static void PlacePiecesStart() {
+        playerPiecesParent = new GameObject("Players");
         for (int player = 0; player < n; player++) {
-            playerPieces[player] = PlacePeice(cells[player][2, 4]);
+            playerPieces[player] = InstObj(new Vector3(0, 0, 0),
+                                     "PreFabs/PlayerPeice", playerPiecesParent);
+            
+            // finding first cell
+            GameObject cell = cells[player][2, 4];
+            
+            // adding meta data 
+            playerPieces[player].GetComponent<PlayerMetaData>().currCell = cell;
+            
+            // placing player piece
+            playerPieces[player].transform.position = NewPiecePostion(cell);
+            playerPieces[player].transform.localRotation = Quaternion.Euler(-90, 0, 0);
+            
+            // changing primary attributes
+            playerPieces[player].name = "Player " + player.ToString();
             ChangeColor(playerPieces[player], playerColors[player]);
         }
     }
 
-    private static GameObject PlacePeice(GameObject player, GameObject parent)
-    {
-        player.transform.parent = parent.transform;
-        player.transform.localPosition = new Vector3(0, 0.5f, 0); 
-        player.transform.localRotation = Quaternion.Euler(-90, 0, 0);
-        return player;
-    }
-    private static GameObject PlacePeice(GameObject parent) {
-        GameObject playerPeice = InstObj(new Vector3(0, 0.5f, 0), "PreFabs/PlayerPeice", parent);
-        return PlacePeice(playerPeice, parent);
-    }
+    // private static GameObject PlacePeice(GameObject player, GameObject Cell)
+    // {
+    //     player.transform.parent = parent.transform;
+    //     player.transform.localPosition = new Vector3(0, 0.5f, 0); 
+    //     player.transform.localRotation = Quaternion.Euler(-90, 0, 0);
+    //     return player;
+    // }
+    // private static GameObject PlacePeice(GameObject parent) {
+    //     GameObject playerPeice = InstObj(new Vector3(0, 0.5f, 0), "PreFabs/PlayerPeice", parent);
+    //     return PlacePeice(playerPeice, parent);
+    // }
     
     private static void AddStopPoints() {
         for (int player = 0; player < n; player++) {
