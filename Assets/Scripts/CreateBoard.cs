@@ -8,7 +8,7 @@ using UnityEngine.Profiling.Memory.Experimental;
 // TODO Refactoring the code
 public class CreateBoard {
     private static float a = 1;
-    private static int n = 8;
+    private static int n = 6;
     private static readonly float Theta = (360 / n);
     private static GameObject[] insideCorners;
     private static List<GameObject[,]> cells;
@@ -21,7 +21,7 @@ public class CreateBoard {
     private static GameObject centerPieceParent;
     
     
-    [MenuItem("Tools/Create Board")]
+    // [MenuItem("Tools/Create Board")]
     public static void Main() {
         insideCorners = new GameObject[n];
         cells = new List<GameObject[,]>();
@@ -73,7 +73,7 @@ public class CreateBoard {
     }
 
     // Move Piece using menu bar option
-    [MenuItem(itemName: "Tools/Move Player")]
+    // [MenuItem(itemName: "Tools/Move Player")]
     public static void MovePlayerFromMenu()
     {
         // for (int i = 1; i < 4; i++)
@@ -100,7 +100,7 @@ public class CreateBoard {
         // player.transform.Translate(new Vector3(0.0f , 1.5f, 0.0f));
         // PlacePeice(player, nextCell);
     } 
-     [MenuItem("Tools/Reset Player")]
+     // [MenuItem("Tools/Reset Player")]
     public static void ResetPlayer()
     {
         GameObject currCell = GameObject.Find("C1");

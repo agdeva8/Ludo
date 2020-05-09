@@ -17,7 +17,7 @@ public class CenterPeice {
     private static Vector3 cellScale = new Vector3(1, 1, 1);
     private static int pixPerScale = 1;
 
-    [MenuItem("Tools/CenterPeice")]
+    // [MenuItem("Tools/CenterPeice")]
     public static void CreateCenterPeice() {
         GameObject centerPeiceOld = GameObject.Find(centerPeiceName); 
         if (centerPeiceOld != null) {
