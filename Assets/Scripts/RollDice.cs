@@ -4,10 +4,12 @@ using UnityEngine;
 
 public static class RollDice
 {
-    private static readonly float deltaY = 3;
+    private static readonly float DeltaY = 3;
     private static int frozeFor;
     // private static int count = 0;
     private static bool isRunning = false;
+    private static Coroutine checkFallingRoutine; 
+    private static Coroutine updateDiceValueRoutine; 
     
 
     // Update is called once per frame
@@ -20,24 +22,22 @@ public static class RollDice
         // Debug.Log($"Roll Dice Update Coroutine{count}");
         // count++;
 
-        while (!Input.GetMouseButton(0))
+        while (!Input.GetMouseButton(button: 0))
             yield return null;
 
         // Check if the Dice Falls on rolling
-        GameObjects.MB.StartCoroutine(CheckFalling());
+        checkFallingRoutine = GameObjects.MB.StartCoroutine(routine: CheckFalling());
         // Updating Value Displaying to the user
-        GameObjects.MB.StartCoroutine(routine: UpdateDiceValue.Routine());
-        
-        // GameObjects.MB.StopCoroutine(routine: UpdateDiceValue.Routine());
-        
-        while (!Input.GetMouseButtonDown(0))
+        updateDiceValueRoutine = GameObjects.MB.StartCoroutine(routine: UpdateDiceValue.Routine());
+
+        while (!Input.GetMouseButtonDown(button: 0))
             yield return null;
         
         // Debug.Log("Mouse button down");
         var position = GameObjects.DiceTransform.position;
-        position = new Vector3(position.x, position.y + deltaY, position.z);
+        position = new Vector3(x: position.x, y: position.y + DeltaY, z: position.z);
         GameObjects.DiceTransform.position = position;
-        GameObjects.DiceRb.angularVelocity = new Vector3(1000, 1000, 1000);
+        GameObjects.DiceRb.angularVelocity = new Vector3(x: 1000, y: 1000, z: 1000);
         
         // Waiting For the Dice To Stop
         frozeFor = 0;
@@ -50,10 +50,11 @@ public static class RollDice
         }
     
         // Stopping Coroutines
-        GameObjects.MB.StopCoroutine(CheckFalling());
-        GameObjects.MB.StopCoroutine(routine: UpdateDiceValue.Routine());
-        GameObjects.MB.StopCoroutine(Routine());
+        GameObjects.MB.StopCoroutine(checkFallingRoutine);
+        GameObjects.MB.StopCoroutine(updateDiceValueRoutine);
         isRunning = false;
+
+        // Way to stop current coroutine
     }
     
     // Check if the Dice Falls of the table
@@ -63,7 +64,7 @@ public static class RollDice
         {
             if (GameObjects.DiceTransform.position.y < -10)
             {
-                GameObjects.DiceTransform.localPosition = new Vector3(0, deltaY, 0);
+                GameObjects.DiceTransform.localPosition = new Vector3(0, DeltaY, 0);
                 GameObjects.DiceRb.angularVelocity = Vector3.zero; 
                 GameObjects.DiceRb.velocity = Vector3.zero; 
             }
