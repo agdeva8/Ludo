@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Profiling.Memory.Experimental;
@@ -21,7 +20,7 @@ public class CreateBoard {
     private static GameObject centerPieceParent;
     
     
-    // [MenuItem("Tools/Create Board")]
+    [MenuItem("Tools/Create Board")]
     public static void Main() {
         insideCorners = new GameObject[n];
         cells = new List<GameObject[,]>();
@@ -169,19 +168,19 @@ public class CreateBoard {
         }
 
         // create inside center Piece 
-        GameObject inPp = new GameObject("In Parent");
-        inPp.transform.parent = centerPieceParent.transform; 
-        inPp.transform.position = centerPos;
-        GameObject inParent = GameObject.Instantiate(outParent);
-        inParent.name = "In Peice";
-        inParent.transform.parent = inPp.transform;
-        inParent.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
-
-        inPp.transform.localScale = new Vector3(0.5f, 0.2f, 0.5f);
-
-        MeshRenderer[] inChildrenMr = inParent.GetComponentsInChildren<MeshRenderer>();
-        for (int i = 0; i < inChildrenMr.Length; i++)
-            inChildrenMr[i].material = (Material)Resources.Load("Material/InCenter");
+        // GameObject inPp = new GameObject("In Parent");
+        // inPp.transform.parent = centerPieceParent.transform; 
+        // inPp.transform.position = centerPos;
+        // GameObject inParent = GameObject.Instantiate(outParent);
+        // inParent.name = "In Peice";
+        // inParent.transform.parent = inPp.transform;
+        // inParent.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+        //
+        // inPp.transform.localScale = new Vector3(0.5f, 0.2f, 0.5f);
+        //
+        // MeshRenderer[] inChildrenMr = inParent.GetComponentsInChildren<MeshRenderer>();
+        // for (int i = 0; i < inChildrenMr.Length; i++)
+        //     inChildrenMr[i].material = (Material)Resources.Load("Material/InCenter");
     }
 
     private static Vector3 GetCenterPos() {
@@ -290,6 +289,10 @@ public class CreateBoard {
                 insideCorners[i].transform.localRotation = Quaternion.Euler(0, Theta, 0);
             }
         }
+
+        // GameObject BoardParent = new GameObject("Board");
+        // BoardParent.transform.position = GetCenterPos();
+        // rectParents[0].transform.parent = BoardParent.transform;
     }
 
     
