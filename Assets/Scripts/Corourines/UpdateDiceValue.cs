@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class UpdateDiceValue 
+public static class UpdateDiceValue
 {
     public static IEnumerator Routine()
     {

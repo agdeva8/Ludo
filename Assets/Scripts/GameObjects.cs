@@ -33,4 +33,8 @@ public static class GameObjects
     // public static readonly GameObject MonoB = GameObject.Find("MonoB");
     // public static MonoBehaviour MB = MonoB.AddComponent<MonoBehaviour>();
     public static MonoBehaviour MB;
+    
+    // Player to check if the code is running 
+    public static readonly GameObject DebugPlayer = GameObject.Find("Player 0"); 
+    
 }

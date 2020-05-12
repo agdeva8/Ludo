@@ -41,7 +41,7 @@ public static class RollDice
         
         // Waiting For the Dice To Stop
         frozeFor = 0;
-        while (frozeFor < 3)
+        while (frozeFor < 2)
         {
             if (GameObjects.DiceRb.angularVelocity == Vector3.zero &&
                 GameObjects.DiceRb.velocity == Vector3.zero)
@@ -52,9 +52,11 @@ public static class RollDice
         // Stopping Coroutines
         GameObjects.MB.StopCoroutine(checkFallingRoutine);
         GameObjects.MB.StopCoroutine(updateDiceValueRoutine);
+        
+        // Moving Player by one step
+        // GameObjects.MB.StartCoroutine(MovePlayerSingleStep.Routine(GameObjects.DebugPlayer));
+        GameObjects.MB.StartCoroutine(MovePlayer.Routine());
         isRunning = false;
-
-        // Way to stop current coroutine
     }
     
     // Check if the Dice Falls of the table
