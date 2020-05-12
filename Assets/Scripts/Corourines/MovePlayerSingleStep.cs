@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using AppStoreModel;
+// using AppStoreModel;
 using UnityEngine;
 
 public static class MovePlayerSingleStep

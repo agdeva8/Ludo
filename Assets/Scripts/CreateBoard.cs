@@ -7,7 +7,7 @@ using UnityEngine.Profiling.Memory.Experimental;
 // TODO Refactoring the code
 public class CreateBoard {
     private static float a = 1;
-    private static int n = 6;
+    private static int n = 4;
     private static readonly float Theta = (360 / n);
     private static GameObject[] insideCorners;
     private static List<GameObject[,]> cells;
@@ -18,10 +18,12 @@ public class CreateBoard {
     private static GameObject playerPiecesParent;
     private static List<GameObject> centerPieces;
     private static GameObject centerPieceParent;
+    private static GameObject board;
     
     
     [MenuItem("Tools/Create Board")]
     public static void Main() {
+        board = new GameObject("Board");
         insideCorners = new GameObject[n];
         cells = new List<GameObject[,]>();
         stopPointCubes = new List<GameObject>();
@@ -60,6 +62,7 @@ public class CreateBoard {
         AddStopPoints();
         PlacePiecesStart();
         CreateCenterPiece();
+        CreateStartHomes();
         // CheckMetaData();
         RelateCells();
     }
@@ -135,12 +138,80 @@ public class CreateBoard {
         metaData.isStop = true;
         Debug.Log($"Changing variable to true {metaData.isStop}");
     }
+
+    private static void CreateStartHomes()
+    {
+        for (int player = 0; player < n; player++)
+        {
+            List<Vector3> vertices = new List<Vector3>();
+            List<int> triangles = new List<int>();
+            
+            Vector3 pos = insideCorners[(player + 1) % n].transform.position;
+            pos.y = (float) (pos.y + 0.5);
+            vertices.Add(pos);
+        
+            GameObject dummy = new GameObject("Dummy");
+            dummy.transform.parent = cells[player][2, 5].transform;
+            dummy.transform.localPosition = new Vector3(0, 0, 0);
+            dummy.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+            dummy.transform.Translate(new Vector3(0.5f, 0.5f, 0.5f));
+            vertices.Add(dummy.transform.position);
+        
+            dummy.transform.parent = cells[(player + 1) % n][0, 5].transform;
+            dummy.transform.localPosition = new Vector3(0, 0, 0);
+            dummy.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+            dummy.transform.Translate(new Vector3(-0.5f, 0.5f, 0.5f));
+            vertices.Add(dummy.transform.position);
+        
+            GameObject outPiece = new GameObject("Home " + 0);
+            // outPiece.transform.parent = outParent.transform;
+            MeshFilter outPieceMf = outPiece.AddComponent<MeshFilter>(); 
+            MeshRenderer outPieceMr = outPiece.AddComponent<MeshRenderer>();
+
+            triangles.AddRange(new List<int>() {0, 1, 2});
+
+            Mesh mesh = new Mesh();
+            outPieceMf.sharedMesh = mesh;
+
+            outPieceMf.sharedMesh.vertices = vertices.ToArray();
+            outPieceMf.sharedMesh.triangles = triangles.ToArray();
+            outPieceMf.sharedMesh.RecalculateNormals();
+
+            // Adding Material 
+            outPieceMr.material = (Material)Resources.Load("Material/CenterPeice");
+            ChangeColor(outPiece, playerColors[player]);
+
+            Vector3 centroidVertex = (vertices[0] + vertices[1] + vertices[2]) / 3;
+            GameObject inPiece = GameObject.Instantiate(outPiece);
+            inPiece.name = "In Piece";
+        
+            GameObject inPieceParent = new GameObject("In Piece Parent");
+            inPieceParent.transform.position = centroidVertex; 
+            // inPieceParent.transform.parent = outPiece.transform;
+        
+            inPiece.transform.parent = inPieceParent.transform;
+            ChangeColor(inPiece, playerColors[player] * 0.6f);
+        
+            inPiece.transform.Translate(new Vector3(0, 0.01f, 0));
+            //
+            // // inPiece.transform.localPosition = new Vector3(0, 0, 0);
+            inPieceParent.transform.localScale = new Vector3(0.6f, 1, 0.6f);
+            // MeshFilter inPieceMf =  inPiece.AddComponent<MeshFilter>(); 
+            // MeshRenderer inPieceMr = inPiece.AddComponent<MeshRenderer>();
+
+        
+            // // Adding to the list of center peices
+            // centerPieces.Add(outPiece);
+            outPiece.transform.parent = board.transform;
+        }
+    }
     
     private static void CreateCenterPiece() {
         Vector3 centerPos = GetCenterPos();
 
         centerPieceParent = new GameObject("Center Piece");
         centerPieceParent.transform.position = centerPos;
+        centerPieceParent.transform.parent = board.transform;
 
         GameObject outPp = new GameObject("Out Parent");
         outPp.transform.parent = centerPieceParent.transform;
@@ -215,6 +286,8 @@ public class CreateBoard {
     
     private static void PlacePiecesStart() {
         playerPiecesParent = new GameObject("Players");
+        playerPiecesParent.transform.parent = board.transform;
+        
         for (int player = 0; player < n; player++) {
             playerPieces[player] = InstObj(new Vector3(0, 0, 0),
                                      "PreFabs/PlayerPeice", playerPiecesParent);
@@ -289,8 +362,6 @@ public class CreateBoard {
     }
 
     public static void CreateRect() {
-        GameObject[] rectParents = new GameObject[n];
-
         for (int i = 0; i < n; i++) {
             insideCorners[i] = new GameObject("Rect Parent " + i.ToString());
             if (i >= 1) {
@@ -305,9 +376,7 @@ public class CreateBoard {
             }
         }
 
-        // GameObject BoardParent = new GameObject("Board");
-        // BoardParent.transform.position = GetCenterPos();
-        // rectParents[0].transform.parent = BoardParent.transform;
+        insideCorners[0].transform.parent = board.transform;
     }
 
     
