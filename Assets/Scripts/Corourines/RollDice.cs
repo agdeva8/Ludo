@@ -22,18 +22,17 @@ public static class RollDice
         // Debug.Log($"Roll Dice Update Coroutine{count}");
         // count++;
 
-        while (!Input.GetMouseButton(button: 0))
+        while (!IsObjClicked(GameObjects.Dice))
             yield return null;
+        // while (!Input.GetMouseButton(button: 0))
+        //     yield return null;
+        // Debug.Log("Mouse button down");
 
         // Check if the Dice Falls on rolling
         checkFallingRoutine = GameObjects.MB.StartCoroutine(routine: CheckFalling());
         // Updating Value Displaying to the user
         updateDiceValueRoutine = GameObjects.MB.StartCoroutine(routine: UpdateDiceValue.Routine());
 
-        while (!Input.GetMouseButtonDown(button: 0))
-            yield return null;
-        
-        // Debug.Log("Mouse button down");
         var position = GameObjects.DiceTransform.position;
         position = new Vector3(x: position.x, y: position.y + DeltaY, z: position.z);
         GameObjects.DiceTransform.position = position;
@@ -72,5 +71,26 @@ public static class RollDice
             }
             yield return null;
         }
+    }
+    
+    private static bool IsObjClicked(GameObject obj)
+    {
+        
+        if (!Input.GetMouseButtonDown (0))
+            return false;
+
+        RaycastHit hitInfo = new RaycastHit ();
+        if (Camera.main != null && 
+                Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hitInfo)) {
+            // Debug.Log ("Object Hit is " + hitInfo.collider.gameObject.name);
+
+            //If you want it to only detect some certain game object it hits, you can do that here
+            if (hitInfo.collider.gameObject == obj)
+            {
+                Debug.Log("obj hit");
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -31,14 +31,29 @@ public class CreateBoard {
         CreateRect();
         // CreateCenter();
         playerColors = new List<Color>() {
-            Color.white,
-            Color.yellow,
-            Color.blue,
-            Color.red,
-            Color.green,
-            Color.black,
-            Color.magenta,
-            Color.cyan
+            // Sky Blue
+            new Color(0.43f, 0.99f, 1f),
+            
+            // Yellow 
+            new Color(1f, 0.99f, 0.59f),
+            
+            // Baby pink 
+            new Color(1f, 0.74f, 0.99f),
+            
+            // Blood Red 
+            new Color(1f, 0.35f, 0.35f),
+            
+            // Parrot Green 
+            new Color(0.51f, 1f, 0.41f),
+            
+            // Purple 
+            new Color(0.63f, 0.31f, 1f),
+           
+            // Violet
+            new Color(0.38f, 0.44f, 1f),
+            
+            // Grey 
+            new Color(0.67f, 0.67f, 0.67f)
         };
 
         SetBasicColor();
