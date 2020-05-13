@@ -8,7 +8,7 @@ using UnityEngine.Profiling.Memory.Experimental;
 public class CreateBoard {
     private static float a = 1;
     private static int n = 4;
-    private static readonly float Theta = (360 / n);
+    private static float Theta = (360 / n);
     private static GameObject[] insideCorners;
     private static List<GameObject[,]> cells;
     private static Vector3 cellScale;
@@ -20,9 +20,61 @@ public class CreateBoard {
     private static GameObject centerPieceParent;
     private static GameObject board;
     
+    [MenuItem("Tools/Create Board/Players 4")]
+    public static void NPlayers4()
+    {
+        n = 4;
+
+        board = GameObject.Find("Board");
+        if (board != null)
+            GameObject.DestroyImmediate(board);
+        Main();
+    }
     
-    [MenuItem("Tools/Create Board")]
-    public static void Main() {
+    [MenuItem("Tools/Create Board/Players 5")]
+    public static void NPlayers5()
+    {
+        n = 5;
+        board = GameObject.Find("Board");
+        if (board != null)
+            GameObject.DestroyImmediate(board);
+        Main();
+    }
+    
+    [MenuItem("Tools/Create Board/Players 6")]
+    public static void NPlayers6()
+    {
+        n = 6;
+        board = GameObject.Find("Board");
+        if (board != null)
+            GameObject.DestroyImmediate(board);
+        Main();
+    }
+    
+    [MenuItem("Tools/Create Board/Players 7")]
+    public static void NPlayers7()
+    {
+        n = 7;
+        board = GameObject.Find("Board");
+        if (board != null)
+            GameObject.DestroyImmediate(board);
+        Main();
+    }
+    
+    [MenuItem("Tools/Create Board/Players 8")]
+    public static void NPlayers8()
+    {
+        n = 8;
+        board = GameObject.Find("Board");
+        if (board != null)
+            GameObject.DestroyImmediate(board);
+        Main();
+    }
+    
+    // [MenuItem("Tools/Create Board")]
+    public static void Main()
+    {
+        Theta = (float) (360.0 / n);
         board = new GameObject("Board");
         insideCorners = new GameObject[n];
         cells = new List<GameObject[,]>();
@@ -141,34 +193,72 @@ public class CreateBoard {
 
     private static void CreateStartHomes()
     {
+        // Main Parent of Start Home
+        GameObject homeParent = new GameObject("Start Home");
+        homeParent.transform.parent = board.transform;
+        
+        GameObject outParent = new GameObject("Out Home");
+        outParent.transform.parent = homeParent.transform;
+        
+        GameObject inParent = new GameObject("In Home");
+        inParent.transform.parent = homeParent.transform;
+        
+        Vector3[,] outCorners = new Vector3[n, 2];
+
+        GameObject dummy = new GameObject("Dummy");
         for (int player = 0; player < n; player++)
         {
-            List<Vector3> vertices = new List<Vector3>();
-            List<int> triangles = new List<int>();
-            
-            Vector3 pos = insideCorners[(player + 1) % n].transform.position;
-            pos.y = (float) (pos.y + 0.5);
-            vertices.Add(pos);
-        
-            GameObject dummy = new GameObject("Dummy");
             dummy.transform.parent = cells[player][2, 5].transform;
             dummy.transform.localPosition = new Vector3(0, 0, 0);
             dummy.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
             dummy.transform.Translate(new Vector3(0.5f, 0.5f, 0.5f));
-            vertices.Add(dummy.transform.position);
-        
-            dummy.transform.parent = cells[(player + 1) % n][0, 5].transform;
+            outCorners[player, 0] = dummy.transform.position; 
+            
+            dummy.transform.parent = cells[player][0, 5].transform;
             dummy.transform.localPosition = new Vector3(0, 0, 0);
             dummy.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
             dummy.transform.Translate(new Vector3(-0.5f, 0.5f, 0.5f));
-            vertices.Add(dummy.transform.position);
-        
-            GameObject outPiece = new GameObject("Home " + 0);
-            // outPiece.transform.parent = outParent.transform;
-            MeshFilter outPieceMf = outPiece.AddComponent<MeshFilter>(); 
+            outCorners[player, 1] = dummy.transform.position;
+        }
+
+        for (int player = 0; player < n; player++)
+        {
+            List<Vector3> vertices = new List<Vector3>();
+            List<int> triangles = new List<int>();
+
+            Vector3 pos = insideCorners[(player + 1) % n].transform.position;
+            pos.y = (float) (pos.y + 0.5);
+            vertices.Add(pos);
+
+            vertices.Add(outCorners[player, 0]);
+
+            // only  for n = 4
+
+            if (n == 4)
+            {
+                dummy.transform.parent = cells[player][2, 5].transform;
+                dummy.transform.localPosition = new Vector3(0, 0, 0);
+                dummy.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+                dummy.transform.Translate(new Vector3(6.5f, 0.5f, 0.5f));
+                vertices.Add(dummy.transform.position);
+            }
+
+            vertices.Add(outCorners[(player + 1) % n, 1]);
+
+            GameObject outPiece = new GameObject($"OutHome {player}");
+            outPiece.transform.parent = outParent.transform;
+            MeshFilter outPieceMf = outPiece.AddComponent<MeshFilter>();
             MeshRenderer outPieceMr = outPiece.AddComponent<MeshRenderer>();
 
-            triangles.AddRange(new List<int>() {0, 1, 2});
+            if (n == 4)
+            {
+                triangles.AddRange(new List<int>() {0, 1, 2});
+                triangles.AddRange(new List<int>() {2, 3, 0});
+            }
+            else
+            {
+                triangles.AddRange(new List<int>() {0, 1, 2});
+            }
 
             Mesh mesh = new Mesh();
             outPieceMf.sharedMesh = mesh;
@@ -181,29 +271,65 @@ public class CreateBoard {
             outPieceMr.material = (Material)Resources.Load("Material/CenterPeice");
             ChangeColor(outPiece, playerColors[player]);
 
-            Vector3 centroidVertex = (vertices[0] + vertices[1] + vertices[2]) / 3;
+            
+            // Adding InPiece
+            // Finding center vertex
+
+            Vector3 sum = new Vector3(0, 0,0);
+            foreach (var vertex in vertices)
+                sum += vertex;
+
+            Vector3 centroidVertex = (sum / vertices.Count);
+            
             GameObject inPiece = GameObject.Instantiate(outPiece);
-            inPiece.name = "In Piece";
+            inPiece.name = $"InHome {player}";
         
-            GameObject inPieceParent = new GameObject("In Piece Parent");
+            GameObject inPieceParent = new GameObject($"InHome {player} Parent");
             inPieceParent.transform.position = centroidVertex; 
-            // inPieceParent.transform.parent = outPiece.transform;
+            inPieceParent.transform.parent = inParent.transform;
         
             inPiece.transform.parent = inPieceParent.transform;
             ChangeColor(inPiece, playerColors[player] * 0.6f);
         
             inPiece.transform.Translate(new Vector3(0, 0.01f, 0));
-            //
-            // // inPiece.transform.localPosition = new Vector3(0, 0, 0);
             inPieceParent.transform.localScale = new Vector3(0.6f, 1, 0.6f);
-            // MeshFilter inPieceMf =  inPiece.AddComponent<MeshFilter>(); 
-            // MeshRenderer inPieceMr = inPiece.AddComponent<MeshRenderer>();
 
-        
-            // // Adding to the list of center peices
-            // centerPieces.Add(outPiece);
             outPiece.transform.parent = board.transform;
         }
+    }
+
+    private static Vector3 IntersectionPoint(Vector3 p1, Vector3 p2, Vector3 p1Bar, Vector3 p2Bar) 
+    {
+        Vector3 p;
+
+        float m1 = GetSlope(p1, p1Bar);
+        float m2 = GetSlope(p2, p2Bar);
+        
+        Debug.Log("m1 is " + m1);
+        Debug.Log("m2 is " + m2);
+        
+
+        if (Math.Abs(m1) < 0.01f && float.IsInfinity(Mathf.Abs(m2)))
+        {
+            p.x = p2.x;
+            p.y = p1.y;
+            p.z = p1.z;
+            return p;
+        }
+        
+        if (float.IsInfinity(Mathf.Abs(m1)) && Math.Abs(m2) < 0.01f)
+        {
+            p.x = p1.x;
+            p.y = p1.y;
+            p.z = p2.z;
+            return p;
+        }
+
+            p.x = (p2.z - p1.z + m1 * p1.x - m2 * p2.x) / (m1 - m2);
+        p.y = 1; 
+        p.z = (p2.x - p1.x + m1 * p1.z - m2 * p2.z) / (1.0f / m1 -  1.0f / m2);
+
+        return p;
     }
     
     private static void CreateCenterPiece() {
