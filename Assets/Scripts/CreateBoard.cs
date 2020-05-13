@@ -14,11 +14,13 @@ public class CreateBoard {
     private static Vector3 cellScale;
     private static List<Color> playerColors;
     private static List<GameObject> stopPointCubes;
-    private static GameObject[] playerPieces;
+    private static GameObject[,] playerPieces;
     private static GameObject playerPiecesParent;
+    private static GameObject[,] startHomeCells;
     private static List<GameObject> centerPieces;
     private static GameObject centerPieceParent;
     private static GameObject board;
+    private static Vector3[] startHomeCentroid;
     
     [MenuItem("Tools/Create Board/Players 4")]
     public static void NPlayers4()
@@ -80,9 +82,7 @@ public class CreateBoard {
         cells = new List<GameObject[,]>();
         stopPointCubes = new List<GameObject>();
         cellScale = new Vector3(1, 1, 1);
-        playerPieces = new GameObject[n];
 
-        CreateRect();
         // CreateCenter();
         playerColors = new List<Color>() {
             // Sky Blue
@@ -110,11 +110,12 @@ public class CreateBoard {
             new Color(0.67f, 0.67f, 0.67f)
         };
 
+        CreateRect();
+        CreateStartHomes();
         SetBasicColor();
         AddStopPoints();
         PlacePiecesStart();
         CreateCenterPiece();
-        CreateStartHomes();
         // CheckMetaData();
         RelateCells();
     }
@@ -193,6 +194,9 @@ public class CreateBoard {
 
     private static void CreateStartHomes()
     {
+        // initializing centroid
+        startHomeCentroid = new Vector3[n];
+        
         // Main Parent of Start Home
         GameObject homeParent = new GameObject("Start Home");
         homeParent.transform.parent = board.transform;
@@ -279,13 +283,13 @@ public class CreateBoard {
             foreach (var vertex in vertices)
                 sum += vertex;
 
-            Vector3 centroidVertex = (sum / vertices.Count);
+            startHomeCentroid[player] = sum / vertices.Count;
             
             GameObject inPiece = GameObject.Instantiate(outPiece);
             inPiece.name = $"InHome {player}";
         
             GameObject inPieceParent = new GameObject($"InHome {player} Parent");
-            inPieceParent.transform.position = centroidVertex; 
+            inPieceParent.transform.position = startHomeCentroid[player]; 
             inPieceParent.transform.parent = inParent.transform;
         
             inPiece.transform.parent = inPieceParent.transform;
@@ -325,7 +329,7 @@ public class CreateBoard {
             return p;
         }
 
-            p.x = (p2.z - p1.z + m1 * p1.x - m2 * p2.x) / (m1 - m2);
+        p.x = (p2.z - p1.z + m1 * p1.x - m2 * p2.x) / (m1 - m2);
         p.y = 1; 
         p.z = (p2.x - p1.x + m1 * p1.z - m2 * p2.z) / (1.0f / m1 -  1.0f / m2);
 
@@ -405,7 +409,10 @@ public class CreateBoard {
 
     public static Vector3 NewPiecePostion(GameObject cell) {
         Vector3 retPosition = cell.transform.position;
-        retPosition.y = retPosition.y + 0.5f;
+        
+        // 0.5f to bring it on same level
+        // 0.001f to avoid overriding if on same level
+        retPosition.y = retPosition.y + 0.5f + 0.001f;
 
         return retPosition;
     }
@@ -414,23 +421,46 @@ public class CreateBoard {
         playerPiecesParent = new GameObject("Players");
         playerPiecesParent.transform.parent = board.transform;
         
-        for (int player = 0; player < n; player++) {
-            playerPieces[player] = InstObj(new Vector3(0, 0, 0),
-                                     "PreFabs/PlayerPeice", playerPiecesParent);
+        playerPieces = new GameObject[n, 4];
+        startHomeCells = new GameObject[n, 4];
+        
+        GameObject startHomeCellParent = new GameObject("Start Home Cells");
+        startHomeCellParent.transform.parent = board.transform;
+        
+        for (int player = 0; player < n; player++)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                playerPieces[player, i] = InstObj(new Vector3(0, 0, 0),
+                    "PreFabs/PlayerPeice", playerPiecesParent);
             
-            // finding first cell
-            GameObject cell = cells[player][2, 4];
+                // Creating Home Cell
+                startHomeCells[player, i] = InstObj(Vector3.zero, "Prefabs/StartHomeCell", startHomeCellParent);
+                // Naming it for future use
+                startHomeCells[player, i].name = $"StartHomeCell{player}{i}";
+                // Changing its Color
+                ChangeColor(startHomeCells[player, i], playerColors[player]);
+                // Positioning it 
+                Vector3 origPos = startHomeCells[player, i].transform.position;
+                Vector3 newPos = startHomeCentroid[player];
+
+                float r = 1;
+                startHomeCells[player, i].transform.position = new Vector3(
+                    newPos.x + r * Mathf.Cos(Mathf.PI / 2 * i),
+                    0.01f,
+                    newPos.z + r * Mathf.Sin(Mathf.PI / 2 * i));
+
+                // adding meta data 
+                playerPieces[player, i].GetComponent<PlayerMetaData>().currCell = startHomeCells[player, i];
             
-            // adding meta data 
-            playerPieces[player].GetComponent<PlayerMetaData>().currCell = cell;
+                // placing player piece
+                playerPieces[player, i].transform.position = NewPiecePostion(startHomeCells[player, i]);
+                playerPieces[player, i].transform.localRotation = Quaternion.Euler(-90, 0, 0);
             
-            // placing player piece
-            playerPieces[player].transform.position = NewPiecePostion(cell);
-            playerPieces[player].transform.localRotation = Quaternion.Euler(-90, 0, 0);
-            
-            // changing primary attributes
-            playerPieces[player].name = "Player " + player.ToString();
-            ChangeColor(playerPieces[player], playerColors[player]);
+                // changing primary attributes
+                playerPieces[player, i].name = $"Player{player}{i}";
+                ChangeColor(playerPieces[player, i], playerColors[player]);
+            }
         }
     }
 
