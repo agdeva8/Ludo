@@ -7,8 +7,8 @@ using UnityEngine.Profiling.Memory.Experimental;
 // TODO Refactoring the code
 public class CreateBoard {
     private static float a = 1;
-    private static int n = 4;
-    private static float Theta = (360 / n);
+    private static int n;
+    private static float theta;
     private static GameObject[] insideCorners;
     private static List<GameObject[,]> cells;
     private static Vector3 cellScale;
@@ -76,7 +76,7 @@ public class CreateBoard {
     // [MenuItem("Tools/Create Board")]
     public static void Main()
     {
-        Theta = (float) (360.0 / n);
+        theta = (float) (360.0 / n);
         board = new GameObject("Board");
         insideCorners = new GameObject[n];
         cells = new List<GameObject[,]>();
@@ -138,7 +138,21 @@ public class CreateBoard {
             cells[player][0, 5].GetComponent<CellMetaData>().SetNextGameObj(cells[player][1, 5]); 
             //
             cells[player][1, 5].GetComponent<CellMetaData>().SetNextGameObj(cells[player][2, 5]); 
+            
+            // // Linking the middle field
+            for (int i = 4; i > 0; i--)
+                cells[player][1, i].GetComponent<CellMetaData>().SetNextGameObj(cells[player][1, i - 1]); 
+            
+            // Relating home Cells to first Cell
+            for (int j = 0; j < 4; j++)
+                startHomeCells[player, j].GetComponent<CellMetaData>().SetNextGameObj(cells[player][2, 4]); 
+            
+            // Setting the way to go home
+            cells[player][1, 5].GetComponent<CellMetaData>().SetNextGameObj(cells[player][2, 5], cells[player][1, 4]);
+            cells[player][1, 5].GetComponent<CellMetaData>().PlayerPortion = player;
+
         }
+        
         
     }
 
@@ -528,7 +542,7 @@ public class CreateBoard {
             cells.Add(CreateGrid(3, 6, insideCorners[i]));
             
             if (i >= 1) {
-                insideCorners[i].transform.localRotation = Quaternion.Euler(0, Theta, 0);
+                insideCorners[i].transform.localRotation = Quaternion.Euler(0, theta, 0);
             }
         }
 

@@ -19,7 +19,11 @@ public static class MovePlayerSingleStep
         isRunning = true;
         player = _player;
         GameObject currCell = player.GetComponent<PlayerMetaData>().currCell;
-        nextCell = currCell.GetComponent<CellMetaData>().GetNextGameObj();
+
+        if (currCell == null)
+            Debug.Log("curr cell is null");
+        
+        nextCell = currCell.GetComponent<CellMetaData>().GetNextGameObj(0);
         movementSpeed = 10f;
         
         if (nextCell == null)

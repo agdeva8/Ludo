@@ -35,6 +35,6 @@ public static class GameObjects
     public static MonoBehaviour MB;
     
     // Player to check if the code is running 
-    public static readonly GameObject DebugPlayer = GameObject.Find("Player 0"); 
+    public static readonly GameObject DebugPlayer = GameObject.Find("Player00"); 
     
 }

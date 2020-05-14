@@ -5,13 +5,13 @@ using UnityEngine;
 public static class RollDice
 {
     private static readonly float DeltaY = 3;
+    private static readonly int rollingTime = 4;
     private static int frozeFor;
     // private static int count = 0;
     private static bool isRunning = false;
     private static Coroutine checkFallingRoutine; 
     private static Coroutine updateDiceValueRoutine; 
     
-
     // Update is called once per frame
     public static IEnumerator Routine()
     {
@@ -34,9 +34,43 @@ public static class RollDice
         updateDiceValueRoutine = GameObjects.MB.StartCoroutine(routine: UpdateDiceValue.Routine());
 
         var position = GameObjects.DiceTransform.position;
-        position = new Vector3(x: position.x, y: position.y + DeltaY, z: position.z);
-        GameObjects.DiceTransform.position = position;
-        GameObjects.DiceRb.angularVelocity = new Vector3(x: 1000, y: 1000, z: 1000);
+
+        Rigidbody rb = GameObjects.DiceRb;
+
+        float tx = Random.Range(100, 2000);
+        float ty = Random.Range(100, 2000);
+        float tz = Random.Range(100, 2000);
+        rb.AddForce(Vector3.up * 500);
+        rb.AddTorque(tx, ty, tz);
+
+        // position = new Vector3(x: position.x, y: position.y + DeltaY, z: position.z);
+        // GameObjects.DiceTransform.position = position;
+        // // GameObjects.DiceRb.angularVelocity = new Vector3(x: 1000, y: 1000, z: 1000);
+        // GameObjects.DiceRb.angularVelocity = new Vector3(
+        //     Random.Range(0, 1000) + 14000,
+        //     0, 0);
+        //                                 // Random.Range(-1000, 1000) + 14000,
+        //                                 // Random.Range(-1000, 1000) + 14000);
+        //
+        // GameObjects.DiceRb.constraints = RigidbodyConstraints.FreezePositionY;
+        // yield return new WaitForSeconds(0.3f);
+        // GameObjects.DiceRb.constraints = RigidbodyConstraints.None;
+        //
+        // GameObjects.DiceRb.AddRelativeTorque(new Vector3(2f, 2f, 2f)) ;
+        
+        // Rolling Dice  for some frames and keeping it up in the air for that long
+        // GameObjects.DiceRb.constraints = RigidbodyConstraints.FreezePositionY;
+        //
+        // for (int i = 0; i < rollingTime; i++)
+        // {
+        //     // GameObjects.DiceRb.AddTorque(new Vector3(
+        //     //                                 Random.Range(-2, 2),
+        //     //                                 Random.Range(-2, 2),
+        //     //                                 Random.Range(-2, 2)));
+        //     yield return null;
+        // }
+        // GameObjects.DiceRb.constraints = RigidbodyConstraints.None;
+        
         
         // Waiting For the Dice To Stop
         frozeFor = 0;
