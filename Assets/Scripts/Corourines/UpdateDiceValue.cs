@@ -10,7 +10,7 @@ public static class UpdateDiceValue
         while (true)
         {
             string displayNum = GetNum().ToString();
-            GameObjects.DiceScore.text = displayNum;
+            ClassObjects.Gameobj.DiceScore.text = displayNum;
             yield return null;
         }
     }
@@ -18,7 +18,7 @@ public static class UpdateDiceValue
     static int GetNum()
     {
         int diceNum = 0;
-        Vector3 diceAngle = GameObjects.DiceTransform.rotation.eulerAngles;
+        Vector3 diceAngle = ClassObjects.Gameobj.DiceTransform.rotation.eulerAngles;
 
         if (IsAngleEqual( diceAngle.x, 0))
         {

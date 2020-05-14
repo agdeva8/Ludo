@@ -10,32 +10,31 @@ public static class RollDice
     // private static int count = 0;
     private static bool isRunning = false;
     private static Coroutine checkFallingRoutine; 
-    private static Coroutine updateDiceValueRoutine; 
+    private static Coroutine updateDiceValueRoutine;
     
     // Update is called once per frame
     public static IEnumerator Routine()
     {
-        if (isRunning)
-            yield break;
+        if (isRunning) yield break;
 
         isRunning = true;
         // Debug.Log($"Roll Dice Update Coroutine{count}");
         // count++;
 
-        while (!Helper.IsObjClicked(GameObjects.Dice))
+        while (!Helper.IsObjClicked(ClassObjects.Gameobj.Dice))
             yield return null;
         // while (!Input.GetMouseButton(button: 0))
         //     yield return null;
         // Debug.Log("Mouse button down");
 
         // Check if the Dice Falls on rolling
-        checkFallingRoutine = GameObjects.MB.StartCoroutine(routine: CheckFalling());
+        checkFallingRoutine = ClassObjects.Gameobj.MB.StartCoroutine(routine: CheckFalling());
         // Updating Value Displaying to the user
-        updateDiceValueRoutine = GameObjects.MB.StartCoroutine(routine: UpdateDiceValue.Routine());
+        updateDiceValueRoutine = ClassObjects.Gameobj.MB.StartCoroutine(routine: UpdateDiceValue.Routine());
 
-        var position = GameObjects.DiceTransform.position;
+        var position = ClassObjects.Gameobj.DiceTransform.position;
 
-        Rigidbody rb = GameObjects.DiceRb;
+        Rigidbody rb = ClassObjects.Gameobj.DiceRb;
 
         float tx = Random.Range(100, 2000);
         float ty = Random.Range(100, 2000);
@@ -44,51 +43,51 @@ public static class RollDice
         rb.AddTorque(tx, ty, tz);
 
         // position = new Vector3(x: position.x, y: position.y + DeltaY, z: position.z);
-        // GameObjects.DiceTransform.position = position;
-        // // GameObjects.DiceRb.angularVelocity = new Vector3(x: 1000, y: 1000, z: 1000);
-        // GameObjects.DiceRb.angularVelocity = new Vector3(
+        // ClassObjects.Gameobj.DiceTransform.position = position;
+        // ClassObjects.Gameobj.DiceRb.angularVelocity = new Vector3(x: 2000, y: 0, 0);
+        // ClassObjects.Gameobj.DiceRb.angularVelocity = new Vector3(
         //     Random.Range(0, 1000) + 14000,
         //     0, 0);
         //                                 // Random.Range(-1000, 1000) + 14000,
         //                                 // Random.Range(-1000, 1000) + 14000);
         //
-        // GameObjects.DiceRb.constraints = RigidbodyConstraints.FreezePositionY;
+        // ClassObjects.Gameobj.DiceRb.constraints = RigidbodyConstraints.FreezePositionY;
         // yield return new WaitForSeconds(0.3f);
-        // GameObjects.DiceRb.constraints = RigidbodyConstraints.None;
+        // ClassObjects.Gameobj.DiceRb.constraints = RigidbodyConstraints.None;
         //
-        // GameObjects.DiceRb.AddRelativeTorque(new Vector3(2f, 2f, 2f)) ;
+        // ClassObjects.Gameobj.DiceRb.AddRelativeTorque(new Vector3(2f, 2f, 2f)) ;
         
         // Rolling Dice  for some frames and keeping it up in the air for that long
-        // GameObjects.DiceRb.constraints = RigidbodyConstraints.FreezePositionY;
+        // ClassObjects.Gameobj.DiceRb.constraints = RigidbodyConstraints.FreezePositionY;
         //
         // for (int i = 0; i < rollingTime; i++)
         // {
-        //     // GameObjects.DiceRb.AddTorque(new Vector3(
+        //     // ClassObjects.Gameobj.DiceRb.AddTorque(new Vector3(
         //     //                                 Random.Range(-2, 2),
         //     //                                 Random.Range(-2, 2),
         //     //                                 Random.Range(-2, 2)));
         //     yield return null;
         // }
-        // GameObjects.DiceRb.constraints = RigidbodyConstraints.None;
+        // ClassObjects.Gameobj.DiceRb.constraints = RigidbodyConstraints.None;
         
         
         // Waiting For the Dice To Stop
         frozeFor = 0;
         while (frozeFor < 2)
         {
-            if (GameObjects.DiceRb.angularVelocity == Vector3.zero &&
-                GameObjects.DiceRb.velocity == Vector3.zero)
+            if (ClassObjects.Gameobj.DiceRb.angularVelocity == Vector3.zero &&
+                ClassObjects.Gameobj.DiceRb.velocity == Vector3.zero)
                 frozeFor++;
             yield return null;
         }
     
         // Stopping Coroutines
-        GameObjects.MB.StopCoroutine(checkFallingRoutine);
-        GameObjects.MB.StopCoroutine(updateDiceValueRoutine);
+        ClassObjects.Gameobj.MB.StopCoroutine(checkFallingRoutine);
+        ClassObjects.Gameobj.MB.StopCoroutine(updateDiceValueRoutine);
         
         // Moving Player by one step
-        // GameObjects.MB.StartCoroutine(MovePlayerSingleStep.Routine(GameObjects.DebugPlayer));
-        GameObjects.MB.StartCoroutine(MovePlayer.Routine());
+        // ClassObjects.Gameobj.MB.StartCoroutine(MovePlayerSingleStep.Routine(ClassObjects.Gameobj.DebugPlayer));
+        ClassObjects.Gameobj.MB.StartCoroutine(MovePlayer.Routine());
         isRunning = false;
     }
     
@@ -97,12 +96,21 @@ public static class RollDice
     {
         while (true)
         {
-            if (GameObjects.DiceTransform.position.y < -10)
+            if (ClassObjects.Gameobj.DiceTransform.position.y < -10)
             {
-                GameObjects.DiceTransform.localPosition = new Vector3(0, DeltaY, 0);
-                GameObjects.DiceRb.angularVelocity = Vector3.zero; 
-                GameObjects.DiceRb.velocity = Vector3.zero; 
+                ClassObjects.Gameobj.DiceTransform.localPosition = new Vector3(0, DeltaY, 0);
+                ClassObjects.Gameobj.DiceRb.angularVelocity = Vector3.zero; 
+                ClassObjects.Gameobj.DiceRb.velocity = Vector3.zero; 
             }
+
+            if (ClassObjects.Gameobj.DiceTransform.position.y > 1)
+            {
+                float tx = Random.Range(0, 200);
+                float ty = Random.Range(0, 200);
+                float tz = Random.Range(0, 200);
+                ClassObjects.Gameobj.DiceRb.AddTorque(tx, ty, tz);
+            }
+            
             yield return null;
         }
     }

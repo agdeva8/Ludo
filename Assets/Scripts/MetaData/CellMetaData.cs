@@ -11,10 +11,10 @@ public class CellMetaData : MonoBehaviour {
    public GameObject nextObjOtherPlayer;
    
    // GameObj ID of previous cell 
-   private GameObject _prevObj = null;
+   public GameObject prevObj;
    
    // Current Player Rect Portion
-   public int PlayerPortion = 0;
+   public int playerPortion = 0;
    
    // Check if Curr Cell is Stop
    public bool isStop;
@@ -31,8 +31,21 @@ public class CellMetaData : MonoBehaviour {
         SetNextGameObj(otherPlayer, otherPlayer);
    }
    
+   // Setting Next GameObject along with previous
+   public void SetNextPrevGameObj(GameObject otherPlayer, GameObject samePlayer) {
+       nextObjOtherPlayer = otherPlayer;
+       nextObjSamePlayer = samePlayer;
+       otherPlayer.GetComponent<CellMetaData>().prevObj = this.gameObject;
+       samePlayer.GetComponent<CellMetaData>().prevObj = this.gameObject;
+   }
+   public void SetNextPrevGameObj(GameObject otherPlayer)
+   {
+       SetNextPrevGameObj(otherPlayer, otherPlayer);
+   }
+   
+   
    public GameObject GetNextGameObj(int player) {
-       return player == PlayerPortion ? nextObjSamePlayer : nextObjOtherPlayer;
+       return player == playerPortion ? nextObjSamePlayer : nextObjOtherPlayer;
    }
    
    public GameObject GetNextGameObj()

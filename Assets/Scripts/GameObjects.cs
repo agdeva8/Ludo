@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
@@ -12,29 +14,58 @@ using UnityEngine;
 /// GameObjects will be declared firs
 /// All components will be declared just below the GameObjects
 /// </summary>
-public static class GameObjects
+public class GameObjects : MonoBehaviour
 {
     // TODO: change name from DiceNUm to DiceNum
     // DiceNum GameObject
-    public static readonly GameObject DiceNum = GameObject.Find("DiceNUm");
+    public GameObject DiceNum;
     // Main Mesh of the DiceNum object
-    public static TextMeshProUGUI DiceScore =
-        DiceNum.GetComponent<TextMeshProUGUI>();
+    public TextMeshProUGUI DiceScore;
+        // DiceNum.GetComponent<TextMeshProUGUI>();
     
     // Dice Game Object
-    public static readonly GameObject Dice = GameObject.Find("Dice"); 
-    // Dice Rotation Variable 
-    public static Transform DiceTransform = Dice.transform;
-    // Dice RigidBody
-    public static Rigidbody DiceRb = Dice.GetComponent<Rigidbody>();
-    
+    public GameObject Dice;
+    public Transform DiceTransform;
+    public Rigidbody DiceRb;
+         
     // MonoBehaviour Object
     // Empty GameObject for MonoBehaviour
     // public static readonly GameObject MonoB = GameObject.Find("MonoB");
     // public static MonoBehaviour MB = MonoB.AddComponent<MonoBehaviour>();
-    public static MonoBehaviour MB;
+    public MonoBehaviour MB;
     
     // Player to check if the code is running 
-    public static readonly GameObject DebugPlayer = GameObject.Find("Player00"); 
+    public GameObject DebugPlayer;
     
+    public GameObject DebugPlayer2;
+    
+    // Player Pieces Array
+    // public GameObject[,] Players = new GameObject[8,4];
+
+    public int NumPlayers;
+    public GameObject[,] Players;
+
+    void Start()
+    {
+        // NumPlayers = CreateBoard.n;
+        NumPlayers = 4;
+        Players = new GameObject[NumPlayers,4];
+
+        DebugPlayer2 = GameObject.Find("Player10");
+        
+        if (DebugPlayer2 == null)
+            Debug.Log("Cant find Player");
+        
+        // Assigning Player Variables using Find
+        for (int i = 0; i < NumPlayers; i++)
+            for (int j = 0; j < 4; j++)
+                Players[i, j] = GameObject.Find($"Player{i}{j}"); 
+                
+    }
+    // public static void AssignPlayers()
+    // {
+    //     for (int i = 0; i < NumPlayers; i++)
+    //         for (int j = 0; j < 4; j++)
+    //             Players[i, j] = GameObject.Find($"Player{i}{j}"); 
+    // }
 }

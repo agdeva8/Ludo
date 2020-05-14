@@ -10,21 +10,21 @@ public static class MovePlayer
 
     public static IEnumerator Routine()
     {
-        int numMoves = int.Parse(GameObjects.DiceScore.text);
+        int numMoves = int.Parse(ClassObjects.Gameobj.DiceScore.text);
         
         int currStep = 0;
         while (currStep < numMoves)
         {
             if (!MovePlayerSingleStep.isRunning)
             {
-                GameObjects.MB.StartCoroutine(MovePlayerSingleStep.Routine(GameObjects.DebugPlayer));
+                ClassObjects.Gameobj.MB.StartCoroutine(MovePlayerSingleStep.Routine(ClassObjects.Gameobj.Players[1, 0]));
                 currStep++;
             }
 
             yield return null;
         }
 
-        GameObjects.MB.StartCoroutine(RollDice.Routine());
+        ClassObjects.Gameobj.MB.StartCoroutine(RollDice.Routine());
 
     }
 

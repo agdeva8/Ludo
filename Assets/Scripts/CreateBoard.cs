@@ -7,7 +7,7 @@ using UnityEngine.Profiling.Memory.Experimental;
 // TODO Refactoring the code
 public class CreateBoard {
     private static float a = 1;
-    private static int n;
+    public static int n;
     private static float theta;
     private static GameObject[] insideCorners;
     private static List<GameObject[,]> cells;
@@ -130,30 +130,27 @@ public class CreateBoard {
         for (int player = 0; player < n; player++)
         {
             for (int i = 5; i > 0; i--)
-                cells[player][2, i].GetComponent<CellMetaData>().SetNextGameObj(cells[player][2, i - 1]);
-            cells[player][2, 0].GetComponent<CellMetaData>().SetNextGameObj(cells[(player + 1) % n][0, 0]); 
+                cells[player][2, i].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[player][2, i - 1]);
+            cells[player][2, 0].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[(player + 1) % n][0, 0]); 
             //
             for (int i = 0; i < 5; i++)
-                cells[player][0, i].GetComponent<CellMetaData>().SetNextGameObj(cells[player][0, i + 1]);
-            cells[player][0, 5].GetComponent<CellMetaData>().SetNextGameObj(cells[player][1, 5]); 
+                cells[player][0, i].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[player][0, i + 1]);
+            cells[player][0, 5].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[player][1, 5]); 
             //
-            cells[player][1, 5].GetComponent<CellMetaData>().SetNextGameObj(cells[player][2, 5]); 
+            cells[player][1, 5].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[player][2, 5]); 
             
             // // Linking the middle field
             for (int i = 4; i > 0; i--)
-                cells[player][1, i].GetComponent<CellMetaData>().SetNextGameObj(cells[player][1, i - 1]); 
+                cells[player][1, i].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[player][1, i - 1]); 
             
             // Relating home Cells to first Cell
             for (int j = 0; j < 4; j++)
-                startHomeCells[player, j].GetComponent<CellMetaData>().SetNextGameObj(cells[player][2, 4]); 
-            
-            // Setting the way to go home
-            cells[player][1, 5].GetComponent<CellMetaData>().SetNextGameObj(cells[player][2, 5], cells[player][1, 4]);
-            cells[player][1, 5].GetComponent<CellMetaData>().PlayerPortion = player;
+                startHomeCells[player, j].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[player][2, 4]);
 
+            // Setting the way to go home
+            cells[player][1, 5].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[player][2, 5], cells[player][1, 4]);
+            cells[player][1, 5].GetComponent<CellMetaData>().playerPortion = player;
         }
-        
-        
     }
 
     // Move Piece using menu bar option
@@ -466,6 +463,7 @@ public class CreateBoard {
 
                 // adding meta data 
                 playerPieces[player, i].GetComponent<PlayerMetaData>().currCell = startHomeCells[player, i];
+                playerPieces[player, i].GetComponent<PlayerMetaData>().homeCell = startHomeCells[player, i];
             
                 // placing player piece
                 playerPieces[player, i].transform.position = NewPiecePostion(startHomeCells[player, i]);

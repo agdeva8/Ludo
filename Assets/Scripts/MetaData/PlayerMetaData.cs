@@ -6,4 +6,5 @@ using UnityEngine;
 public class PlayerMetaData : MonoBehaviour
 {
     public GameObject currCell;
+    public GameObject homeCell;
 }

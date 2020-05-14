@@ -6,7 +6,7 @@ using UnityEngine;
 public static class MovePlayerSingleStep
 {
     private static GameObject player;
-    private static float movementSpeed;
+    private static float movementSpeed = 10f;
     private static GameObject nextCell;
 
     public static bool isRunning = false;
@@ -23,12 +23,11 @@ public static class MovePlayerSingleStep
         if (currCell == null)
             Debug.Log("curr cell is null");
         
+        // Finding Next cell accociated with it
         nextCell = currCell.GetComponent<CellMetaData>().GetNextGameObj(0);
-        movementSpeed = 10f;
         
         if (nextCell == null)
             yield break;
-        
 
         Vector3 desiredPosition = CreateBoard.NewPiecePostion(nextCell);
 
