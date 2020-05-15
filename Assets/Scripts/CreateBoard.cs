@@ -442,6 +442,7 @@ public class CreateBoard {
         {
             for (int i = 0; i < 4; i++)
             {
+                GameObject playerPiece = playerPieces[player, i];
                 playerPieces[player, i] = InstObj(new Vector3(0, 0, 0),
                     "PreFabs/PlayerPeice", playerPiecesParent);
             
@@ -462,8 +463,10 @@ public class CreateBoard {
                     newPos.z + r * Mathf.Sin(Mathf.PI / 2 * i));
 
                 // adding meta data 
-                playerPieces[player, i].GetComponent<PlayerMetaData>().currCell = startHomeCells[player, i];
-                playerPieces[player, i].GetComponent<PlayerMetaData>().homeCell = startHomeCells[player, i];
+                PlayerMetaData playerMetaData = playerPieces[player, i].GetComponent<PlayerMetaData>();
+                playerMetaData.currCell = startHomeCells[player, i];
+                playerMetaData.homeCell = startHomeCells[player, i];
+                playerMetaData.PlayerGroup = player;
             
                 // placing player piece
                 playerPieces[player, i].transform.position = NewPiecePostion(startHomeCells[player, i]);

@@ -8,8 +8,13 @@ using UnityEngine.EventSystems;
 public static class MovePlayer
 {
     public static GameObject Player;
+    public static int NextPlayerTurn = 0;
+    public static int NumPlayers = 4;
     public static void Start()
     {
+        // NextPlayerTurn = 0;
+        // NumPlayers = ClassObjects.Gameobj.NumPlayers;
+        // NumPlayers = 4;
     }
 
     public static IEnumerator Routine()
@@ -29,6 +34,7 @@ public static class MovePlayer
         }
 
         Player = null;
+        NextPlayerTurn = (NextPlayerTurn + 1) % NumPlayers;
         ClassObjects.Gameobj.MB.StartCoroutine(RollDice.Routine());
     }
 
@@ -37,7 +43,11 @@ public static class MovePlayer
         if (Player != null)
             return;
 
-        Player = player;
+        int playerGroup = player.GetComponent<PlayerMetaData>().PlayerGroup;
+        Debug.Log("Player Group is " + playerGroup);
+        
+        if (playerGroup == NextPlayerTurn)
+            Player = player;
         // Player = EventSystem.current.currentSelectedGameObject;
         // Player = ClassObjects.Gameobj.Players[0,0];
     }

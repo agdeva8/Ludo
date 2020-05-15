@@ -7,4 +7,6 @@ public class PlayerMetaData : MonoBehaviour
 {
     public GameObject currCell;
     public GameObject homeCell;
+
+    public int PlayerGroup;
 }
