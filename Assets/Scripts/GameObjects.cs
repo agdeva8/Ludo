@@ -45,10 +45,10 @@ public class GameObjects : MonoBehaviour
     public int NumPlayers;
     public GameObject[,] Players;
 
+    public GameObject[] HomeOut;
+    
     void Start()
     {
-        // NumPlayers = CreateBoard.n;
-        NumPlayers = 4;
         Players = new GameObject[NumPlayers,4];
 
         DebugPlayer2 = GameObject.Find("Player10");

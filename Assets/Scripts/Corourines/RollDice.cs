@@ -11,6 +11,7 @@ public static class RollDice
     private static bool isRunning = false;
     private static Coroutine checkFallingRoutine; 
     private static Coroutine updateDiceValueRoutine;
+    private static Coroutine blinkHomeRoutine;
     
     // Update is called once per frame
     public static IEnumerator Routine()
@@ -21,6 +22,9 @@ public static class RollDice
         // Debug.Log($"Roll Dice Update Coroutine{count}");
         // count++;
 
+        // Blink Current Player Home to notify users of their chance
+        blinkHomeRoutine = ClassObjects.Gameobj.MB.StartCoroutine(BlinkHome.Routine(MovePlayer.NextPlayerTurn));
+        
         while (!Helper.IsObjClicked(ClassObjects.Gameobj.Dice))
             yield return null;
         // while (!Input.GetMouseButton(button: 0))
@@ -84,6 +88,8 @@ public static class RollDice
         // Stopping Coroutines
         ClassObjects.Gameobj.MB.StopCoroutine(checkFallingRoutine);
         ClassObjects.Gameobj.MB.StopCoroutine(updateDiceValueRoutine);
+        ClassObjects.Gameobj.MB.StopCoroutine(blinkHomeRoutine);
+        BlinkHome.Reset();
         
         // Moving Player by one step
         // ClassObjects.Gameobj.MB.StartCoroutine(MovePlayerSingleStep.Routine(ClassObjects.Gameobj.DebugPlayer));
@@ -103,7 +109,7 @@ public static class RollDice
                 ClassObjects.Gameobj.DiceRb.velocity = Vector3.zero; 
             }
 
-            if (ClassObjects.Gameobj.DiceTransform.position.y > 1)
+            if (ClassObjects.Gameobj.DiceTransform.position.y > 2)
             {
                 float tx = Random.Range(0, 200);
                 float ty = Random.Range(0, 200);

@@ -85,20 +85,30 @@ public class CreateBoard {
 
         // CreateCenter();
         playerColors = new List<Color>() {
+            
+            // Sky Blue
+            new Color(0.35f, 0.32f, 1f),
+            // Yellow 
+            new Color(1f, 0.77f, 0.13f),
+            
+            // Blood Red 
+            new Color(1f, 0.17f, 0.18f),
+            
+            // Parrot Green 
+            new Color(0.04f, 1f, 0f),
             // Sky Blue
             new Color(0.43f, 0.99f, 1f),
-            
             // Yellow 
             new Color(1f, 0.99f, 0.59f),
-            
-            // Baby pink 
-            new Color(1f, 0.74f, 0.99f),
             
             // Blood Red 
             new Color(1f, 0.35f, 0.35f),
             
             // Parrot Green 
             new Color(0.51f, 1f, 0.41f),
+            
+            // Baby pink 
+            new Color(1f, 0.74f, 0.99f),
             
             // Purple 
             new Color(0.63f, 0.31f, 1f),
@@ -307,7 +317,7 @@ public class CreateBoard {
             ChangeColor(inPiece, playerColors[player] * 0.6f);
         
             inPiece.transform.Translate(new Vector3(0, 0.01f, 0));
-            inPieceParent.transform.localScale = new Vector3(0.6f, 1, 0.6f);
+            inPieceParent.transform.localScale = new Vector3(0.65f, 1, 0.65f);
 
             outPiece.transform.parent = board.transform;
         }
