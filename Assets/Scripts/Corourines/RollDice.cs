@@ -49,35 +49,6 @@ public static class RollDice
         rb.AddForce(Vector3.up * 1000);
         rb.AddTorque(tx, ty, tz);
 
-        // position = new Vector3(x: position.x, y: position.y + DeltaY, z: position.z);
-        // ClassObjects.Gameobj.DiceTransform.position = position;
-        // ClassObjects.Gameobj.DiceRb.angularVelocity = new Vector3(x: 2000, y: 0, 0);
-        // ClassObjects.Gameobj.DiceRb.angularVelocity = new Vector3(
-        //     Random.Range(0, 1000) + 14000,
-        //     0, 0);
-        //                                 // Random.Range(-1000, 1000) + 14000,
-        //                                 // Random.Range(-1000, 1000) + 14000);
-        //
-        // ClassObjects.Gameobj.DiceRb.constraints = RigidbodyConstraints.FreezePositionY;
-        // yield return new WaitForSeconds(0.3f);
-        // ClassObjects.Gameobj.DiceRb.constraints = RigidbodyConstraints.None;
-        //
-        // ClassObjects.Gameobj.DiceRb.AddRelativeTorque(new Vector3(2f, 2f, 2f)) ;
-        
-        // Rolling Dice  for some frames and keeping it up in the air for that long
-        // ClassObjects.Gameobj.DiceRb.constraints = RigidbodyConstraints.FreezePositionY;
-        //
-        // for (int i = 0; i < rollingTime; i++)
-        // {
-        //     // ClassObjects.Gameobj.DiceRb.AddTorque(new Vector3(
-        //     //                                 Random.Range(-2, 2),
-        //     //                                 Random.Range(-2, 2),
-        //     //                                 Random.Range(-2, 2)));
-        //     yield return null;
-        // }
-        // ClassObjects.Gameobj.DiceRb.constraints = RigidbodyConstraints.None;
-        
-        
         // Waiting For the Dice To Stop
         frozeFor = 0;
         while (frozeFor < 2)
@@ -91,8 +62,6 @@ public static class RollDice
         // Stopping Coroutines
         ClassObjects.Gameobj.MB.StopCoroutine(checkFallingRoutine);
         ClassObjects.Gameobj.MB.StopCoroutine(updateDiceValueRoutine);
-        // ClassObjects.Gameobj.MB.StopCoroutine(blinkHomeRoutine);
-        // blinkHome.Reset();
         
         // Moving Player by one step
         ClassObjects.Gameobj.HomeOut[MovePlayer.NextPlayerTurn].GetComponent<Blink>().Stop();

@@ -478,6 +478,8 @@ public class CreateBoard {
                 playerMetaData.currCell = startHomeCells[player, i];
                 playerMetaData.homeCell = startHomeCells[player, i];
                 playerMetaData.PlayerGroup = player;
+                
+                startHomeCells[player, i].GetComponent<CellMetaData>().AddPlayer(playerPieces[player, i]);
             
                 // placing player piece
                 playerPieces[player, i].transform.position = NewPiecePostion(startHomeCells[player, i]);
