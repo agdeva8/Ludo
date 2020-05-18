@@ -86,6 +86,9 @@ public class CreateBoard {
         // CreateCenter();
         playerColors = new List<Color>() {
             
+            // Parrot Green 
+            new Color(0.13f, 1f, 0.26f, 0.9f),
+            
             // Sky Blue
             new Color(0.35f, 0.32f, 1f),
             // Yellow 
@@ -94,8 +97,6 @@ public class CreateBoard {
             // Blood Red 
             new Color(1f, 0.17f, 0.18f),
             
-            // Parrot Green 
-            new Color(0.04f, 1f, 0f),
             // Sky Blue
             new Color(0.43f, 0.99f, 1f),
             // Yellow 

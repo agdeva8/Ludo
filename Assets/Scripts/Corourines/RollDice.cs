@@ -12,6 +12,7 @@ public static class RollDice
     private static Coroutine checkFallingRoutine; 
     private static Coroutine updateDiceValueRoutine;
     private static Coroutine blinkHomeRoutine;
+    private static BlinkHome blinkHome;
     
     // Update is called once per frame
     public static IEnumerator Routine()
@@ -23,7 +24,9 @@ public static class RollDice
         // count++;
 
         // Blink Current Player Home to notify users of their chance
-        blinkHomeRoutine = ClassObjects.Gameobj.MB.StartCoroutine(BlinkHome.Routine(MovePlayer.NextPlayerTurn));
+        ClassObjects.Gameobj.HomeOut[MovePlayer.NextPlayerTurn].GetComponent<Blink>().StartRoutine();
+        
+        // blinkHomeRoutine = ClassObjects.Gameobj.MB.StartCoroutine(blinkHome.Routine(blinkObj));
         
         while (!Helper.IsObjClicked(ClassObjects.Gameobj.Dice))
             yield return null;
@@ -43,7 +46,7 @@ public static class RollDice
         float tx = Random.Range(100, 2000);
         float ty = Random.Range(100, 2000);
         float tz = Random.Range(100, 2000);
-        rb.AddForce(Vector3.up * 500);
+        rb.AddForce(Vector3.up * 1000);
         rb.AddTorque(tx, ty, tz);
 
         // position = new Vector3(x: position.x, y: position.y + DeltaY, z: position.z);
@@ -88,11 +91,11 @@ public static class RollDice
         // Stopping Coroutines
         ClassObjects.Gameobj.MB.StopCoroutine(checkFallingRoutine);
         ClassObjects.Gameobj.MB.StopCoroutine(updateDiceValueRoutine);
-        ClassObjects.Gameobj.MB.StopCoroutine(blinkHomeRoutine);
-        BlinkHome.Reset();
+        // ClassObjects.Gameobj.MB.StopCoroutine(blinkHomeRoutine);
+        // blinkHome.Reset();
         
         // Moving Player by one step
-        // ClassObjects.Gameobj.MB.StartCoroutine(MovePlayerSingleStep.Routine(ClassObjects.Gameobj.DebugPlayer));
+        ClassObjects.Gameobj.HomeOut[MovePlayer.NextPlayerTurn].GetComponent<Blink>().Stop();
         ClassObjects.Gameobj.MB.StartCoroutine(MovePlayer.Routine());
         isRunning = false;
     }
@@ -109,7 +112,7 @@ public static class RollDice
                 ClassObjects.Gameobj.DiceRb.velocity = Vector3.zero; 
             }
 
-            if (ClassObjects.Gameobj.DiceTransform.position.y > 2)
+            if (ClassObjects.Gameobj.DiceTransform.localPosition.y > 2)
             {
                 float tx = Random.Range(0, 200);
                 float ty = Random.Range(0, 200);

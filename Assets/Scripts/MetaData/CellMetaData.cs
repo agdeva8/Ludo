@@ -38,6 +38,7 @@ public class CellMetaData : MonoBehaviour {
        otherPlayer.GetComponent<CellMetaData>().prevObj = this.gameObject;
        samePlayer.GetComponent<CellMetaData>().prevObj = this.gameObject;
    }
+   
    public void SetNextPrevGameObj(GameObject otherPlayer)
    {
        SetNextPrevGameObj(otherPlayer, otherPlayer);
