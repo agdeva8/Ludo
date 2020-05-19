@@ -65,16 +65,28 @@ public class CellMetaData : MonoBehaviour
     {
         player.transform.parent = gameObject.transform;
         Players.Add(player);
-        player.transform.localPosition = new Vector3(0, 0.5f, 0); 
+        // player.transform.localPosition = new Vector3(0, 0.5f, 0); 
         player.transform.rotation = gameObject.transform.rotation;
         player.transform.localRotation = Quaternion.Euler(-90, 0, 0);
         
         RecalculateScalesPos();
     }
+
+    public void RemovePlayer(GameObject player)
+    {
+        Players.Remove(player);
+        
+        RecalculateScalesPos();
+    }
+
     public void RecalculateScalesPos()
     {
         // z is the height of peice
         int numPlayers = Players.Count;
+        
+        if (numPlayers == 0)
+            return;
+        
         Vector3 newScale = new Vector3(84, 84, 84);
         Vector2 rc = FindRC(numPlayers);
         int r = (int) rc.x;
@@ -85,15 +97,6 @@ public class CellMetaData : MonoBehaviour
 
         switch (numPlayers)
         {
-            // case 1:
-            //     break;
-            // case 2:
-            //     newScale.x /= 2;
-            //     break;
-            // case 3:
-            //     newScale.x /= 3;
-            //     newScale.y /= 3;
-            //     break;
             default:
                 newScale /= Mathf.Max(r, c);
                 // newScale.y /= Mathf.Min(r, c);
@@ -130,10 +133,10 @@ public class CellMetaData : MonoBehaviour
                 Debug.Log(message: $"rIndex {rPIndex} , cIndex {cPIndex}");
                 GameObject player = Players[PlayerIdx];
                 // Scaling Players accordingly
-                player.transform.localScale = newScale;
+                Players[PlayerIdx].transform.localScale = newScale;
 
                 // translating players
-                Players[PlayerIdx].transform.localPosition = new Vector3( rPIndex * rUnitTranslate, 0.5f, 
+                Players[PlayerIdx].transform.localPosition = new Vector3( rPIndex * rUnitTranslate, 0.5f + 0.02f, 
                                                 cPIndex * cUnitTranslate);
                 // Players[PlayerIdx].transform.Translate( rPIndex * rUnitTranslate,
                 //                                 cPIndex * cUnitTranslate, 0);
@@ -150,11 +153,11 @@ public class CellMetaData : MonoBehaviour
         int r = 1;
         int c = 1;
 
-        if (n == 2)
+        if (n >= 1 && n <= 2)
             c = 1;
         else if (n >= 3 && n <= 8)
             c = 2;
-        else if (n >= 10 && n <= 15)
+        else if (n >= 9 && n <= 15)
             c = 3;
         else if (n >= 16 && n <= 20)
             c = 4;

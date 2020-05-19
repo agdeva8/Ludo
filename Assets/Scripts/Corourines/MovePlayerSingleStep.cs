@@ -11,20 +11,26 @@ public static class MovePlayerSingleStep
 
     public static bool isRunning = false;
     // This is the main function which is called
-    public  static IEnumerator Routine(GameObject _player)
+    public  static IEnumerator Routine(GameObject _player, GameObject nextCell)
     {
+        Debug.Log("routine started");
         if (isRunning)
+        {
+            // Debug.Log("is running breaking the yield");
             yield break;
+        }
+
+        // Debug.Log("new routine started");
 
         isRunning = true;
         player = _player;
-        GameObject currCell = player.GetComponent<PlayerMetaData>().currCell;
+        // GameObject currCell = player.GetComponent<PlayerMetaData>().currCell;
 
-        if (currCell == null)
-            Debug.Log("curr cell is null");
+        // if (currCell == null)
+        //     Debug.Log("curr cell is null");
         
         // Finding Next cell accociated with it
-        nextCell = currCell.GetComponent<CellMetaData>().GetNextGameObj(0);
+        // nextCell = currCell.GetComponent<CellMetaData>().GetNextGameObj(0);
         
         if (nextCell == null)
             yield break;
@@ -47,7 +53,7 @@ public static class MovePlayerSingleStep
         }
 
         // Updating curr cell in meta data
-        player.GetComponent<PlayerMetaData>().currCell = nextCell;
+        // player.GetComponent<PlayerMetaData>().currCell = nextCell;
 
         // Changing bit for coroutine status
         isRunning = false;

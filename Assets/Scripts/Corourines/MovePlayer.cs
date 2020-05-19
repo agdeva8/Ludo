@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 public static class MovePlayer
 {
     public static GameObject Player;
-    public static int NextPlayerTurn = 0;
+    public static int NextPlayerTurn = 3;
     public static int NumPlayers = 4;
     public static Coroutine[] MovablePlayersRoutines;
     
@@ -25,39 +25,67 @@ public static class MovePlayer
     {
         
         // PlayerP stands for playerPawn
-        for (int i = 0; i < 4; i++)
-        {
-            blinkPlayerP[i] = new BlinkHome();
-            playerP[i] = ClassObjects.Gameobj.Players[NextPlayerTurn, i];
-            blinkRoutine[i] = ClassObjects.Gameobj.MB.StartCoroutine(blinkPlayerP[i].Routine(playerP[i]));
-        }
+        // for (int i = 0; i < 4; i++)
+        // {
+        //     blinkPlayerP[i] = new BlinkHome();
+        //     playerP[i] = ClassObjects.Gameobj.Players[NextPlayerTurn, i];
+        //     blinkRoutine[i] = ClassObjects.Gameobj.MB.StartCoroutine(blinkPlayerP[i].Routine(playerP[i]));
+        // }
         
         while (Player == null)
             yield return null;
         
         int numMoves = int.Parse(ClassObjects.Gameobj.DiceScore.text);
+        List<GameObject> cellsList = FindCellList(numMoves, Player);
 
-        GameObject lastCell = FindLastCell(numMoves, Player, NextPlayerTurn); 
+        int cellsCount = cellsList.Count;
         
+        Debug.Log($"cell count is {cellsCount}");
+        GameObject lastCell = cellsList[cellsCount- 1];
+        
+        PlayerMetaData playerMetaData = Player.GetComponent<global::PlayerMetaData>();
+        
+        // cellsList[0].GetComponent<CellMetaData>().AddPlayer(Player);
+        // playerMetaData.currCell.GetComponent<CellMetaData>().RemovePlayer(Player);
+        Player.transform.localScale = new Vector3(84, 84, 84);
         // show movement
-        // int currStep = 0;
-        // while (currStep < numMoves)
-        // {
-        //     if (!MovePlayerSingleStep.isRunning)
-        //     {
-        //         ClassObjects.Gameobj.MB.StartCoroutine(MovePlayerSingleStep.Routine(Player));
-        //         currStep++;
-        //     }
-        //     yield return null;
-        // }
+        int currStep = 1;
+        while (currStep < cellsCount)
+        {
+            // Rescale Current cell players
+            cellsList[0].GetComponent<CellMetaData>().RemovePlayer(Player);
+            
+            // Show Movement
+            Vector3 desiredPosition = CreateBoard.NewPiecePostion(cellsList[currStep]);
+    
+            // intermediate postion
+            // (Little Up in the air to show jump)
+            Vector3 midPosition = (Player.transform.position + desiredPosition) / 2;
+            midPosition.y += 1f;
+
+            float t = 0;
+            while (t < 1) {
+                Player.transform.position = Vector3.Lerp(Player.transform.position, midPosition, t);
+                t += 10f * Time.deltaTime;
+                yield return null;
+            }
+
+            t = 0;
+            while (t < 1) {
+                Player.transform.position = Vector3.Lerp(Player.transform.position, desiredPosition, t);
+                t += 10f * Time.deltaTime;
+                yield return null;
+            }
+            currStep++;
+        }
         
         // Last Cell Mechanics
-        
-        Player.GetComponent<PlayerMetaData>().currCell = lastCell;
+        playerMetaData.currCell = lastCell;
         lastCell.GetComponent<CellMetaData>().AddPlayer(Player);
 
+        // Next Turn Preparation
         Player = null;
-        NextPlayerTurn = (NextPlayerTurn + 1) % NumPlayers;
+        // NextPlayerTurn = (NextPlayerTurn + 1) % NumPlayers;
         ClassObjects.Gameobj.MB.StartCoroutine(RollDice.Routine());
     }
 
@@ -72,27 +100,31 @@ public static class MovePlayer
         if (playerGroup == NextPlayerTurn)
             Player = player;
         
-        for (int i = 0; i < 4; i++)
-        {
-            ClassObjects.Gameobj.StopCoroutine(blinkRoutine[i]);
-            blinkPlayerP[i].Reset();
-        }
+        // for (int i = 0; i < 4; i++)
+        // {
+        //     ClassObjects.Gameobj.StopCoroutine(blinkRoutine[i]);
+        //     blinkPlayerP[i].Reset();
+        // }
     }
 
-    public static GameObject FindLastCell(int numMoves, GameObject player, int playerGroup)
+    public static List<GameObject> FindCellList(int numMoves, GameObject player)
     {
-        GameObject currCell = player.GetComponent<PlayerMetaData>().currCell;
-        GameObject nextCell = currCell.GetComponent<CellMetaData>().GetNextGameObj(playerGroup);
+        PlayerMetaData playerMetaData = Player.GetComponent<PlayerMetaData>();
+        int playerGroup = playerMetaData.PlayerGroup;
+        GameObject currCell = playerMetaData.currCell;
+        GameObject nextCell;
 
-        int i = 1;
-        while (i < numMoves && nextCell != null)
+        List<GameObject> cellsList = new List<GameObject>();
+        int i = 0;
+        while (i <= numMoves && currCell != null)
         {
-            currCell = nextCell;
+            cellsList.Add(currCell);
             nextCell = currCell.GetComponent<CellMetaData>().GetNextGameObj(playerGroup);
+            currCell = nextCell;
             i++;
         }
 
-        return nextCell;
+        return cellsList;
     }
 
 }

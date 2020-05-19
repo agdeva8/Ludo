@@ -429,12 +429,21 @@ public class CreateBoard {
         return centerPos;
     }
 
-    public static Vector3 NewPiecePostion(GameObject cell) {
-        Vector3 retPosition = cell.transform.position;
+
+    public static Vector3 NewPiecePostion(GameObject cell)
+    {
+        GameObject tempGO = new GameObject("temp");
+        tempGO.transform.parent = cell.transform;
+
+        tempGO.transform.localPosition = Vector3.up * (0.5f + 0.01f);
+        tempGO.transform.localRotation = Quaternion.Euler(Vector3.zero);
         
+        Vector3 retPosition = tempGO.transform.position;
+        
+        GameObject.DestroyImmediate(tempGO);
         // 0.5f to bring it on same level
         // 0.001f to avoid overriding if on same level
-        retPosition.y = retPosition.y + 0.5f + 0.001f;
+        // retPosition.y = retPosition.y + 0.5f + 0.001f;
 
         return retPosition;
     }
