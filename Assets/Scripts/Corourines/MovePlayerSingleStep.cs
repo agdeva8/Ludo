@@ -9,12 +9,12 @@ public static class MovePlayerSingleStep
     private static float movementSpeed = 10f;
     private static GameObject nextCell;
 
-    public static bool isRunning = false;
+    public static bool IsRunning = false;
     // This is the main function which is called
-    public  static IEnumerator Routine(GameObject _player, GameObject nextCell)
+    public  static IEnumerator Routine(GameObject player, GameObject nextCell)
     {
         Debug.Log("routine started");
-        if (isRunning)
+        if (IsRunning)
         {
             // Debug.Log("is running breaking the yield");
             yield break;
@@ -22,8 +22,8 @@ public static class MovePlayerSingleStep
 
         // Debug.Log("new routine started");
 
-        isRunning = true;
-        player = _player;
+        IsRunning = true;
+        MovePlayerSingleStep.player = player;
         // GameObject currCell = player.GetComponent<PlayerMetaData>().currCell;
 
         // if (currCell == null)
@@ -35,20 +35,20 @@ public static class MovePlayerSingleStep
         if (nextCell == null)
             yield break;
 
-        Vector3 desiredPosition = CreateBoard.NewPiecePostion(nextCell);
+        Vector3 desiredPosition = CreateBoard.NewPiecePosition(nextCell);
 
         // intermediate postion
         // (Little Up in the air to show jump)
-        Vector3 midPosition = (player.transform.position + desiredPosition) / 2;
+        Vector3 midPosition = (MovePlayerSingleStep.player.transform.position + desiredPosition) / 2;
         midPosition.y = midPosition.y + 0.5f;
         
-        while (midPosition != player.transform.position) {
-            player.transform.position = Vector3.MoveTowards(player.transform.position, midPosition, movementSpeed * Time.deltaTime);
+        while (midPosition != MovePlayerSingleStep.player.transform.position) {
+            MovePlayerSingleStep.player.transform.position = Vector3.MoveTowards(MovePlayerSingleStep.player.transform.position, midPosition, movementSpeed * Time.deltaTime);
             yield return null;
         }
 
-        while (desiredPosition != player.transform.position) {
-            player.transform.position = Vector3.MoveTowards(player.transform.position, desiredPosition, movementSpeed * Time.deltaTime);
+        while (desiredPosition != MovePlayerSingleStep.player.transform.position) {
+            MovePlayerSingleStep.player.transform.position = Vector3.MoveTowards(MovePlayerSingleStep.player.transform.position, desiredPosition, movementSpeed * Time.deltaTime);
             yield return null;
         }
 
@@ -56,6 +56,6 @@ public static class MovePlayerSingleStep
         // player.GetComponent<PlayerMetaData>().currCell = nextCell;
 
         // Changing bit for coroutine status
-        isRunning = false;
+        IsRunning = false;
     }
 }

@@ -9,13 +9,14 @@ using UnityEngine.EventSystems;
 public static class MovePlayer
 {
     public static GameObject Player;
-    public static int NextPlayerTurn = 3;
     public static int NumPlayers = 4;
     public static Coroutine[] MovablePlayersRoutines;
     
     static BlinkHome[] blinkPlayerP = new BlinkHome[4];
     static GameObject[] playerP = new GameObject[4];
     static Coroutine[] blinkRoutine = new Coroutine[4];
+    
+    static bool isRunning;
     public static void Start()
     {
         MovablePlayersRoutines = new Coroutine[4];
@@ -23,7 +24,9 @@ public static class MovePlayer
 
     public static IEnumerator Routine()
     {
-        
+
+        Debug.Log("in Routine");
+        isRunning = true;
         // PlayerP stands for playerPawn
         // for (int i = 0; i < 4; i++)
         // {
@@ -31,19 +34,22 @@ public static class MovePlayer
         //     playerP[i] = ClassObjects.Gameobj.Players[NextPlayerTurn, i];
         //     blinkRoutine[i] = ClassObjects.Gameobj.MB.StartCoroutine(blinkPlayerP[i].Routine(playerP[i]));
         // }
-        
+
+        Debug.Log("Waiting for player");
         while (Player == null)
             yield return null;
         
-        int numMoves = int.Parse(ClassObjects.Gameobj.DiceScore.text);
-        List<GameObject> cellsList = FindCellList(numMoves, Player);
+        Debug.Log("now showing movement");
+        
+        PlayerMetaData playerMetaData = Player.GetComponent<global::PlayerMetaData>();
+
+        List<GameObject> cellsList = PossibleMoves.CellsList[playerMetaData.pawnNum]; 
 
         int cellsCount = cellsList.Count;
-        
+
         Debug.Log($"cell count is {cellsCount}");
         GameObject lastCell = cellsList[cellsCount- 1];
         
-        PlayerMetaData playerMetaData = Player.GetComponent<global::PlayerMetaData>();
         
         // cellsList[0].GetComponent<CellMetaData>().AddPlayer(Player);
         // playerMetaData.currCell.GetComponent<CellMetaData>().RemovePlayer(Player);
@@ -56,7 +62,7 @@ public static class MovePlayer
             cellsList[0].GetComponent<CellMetaData>().RemovePlayer(Player);
             
             // Show Movement
-            Vector3 desiredPosition = CreateBoard.NewPiecePostion(cellsList[currStep]);
+            Vector3 desiredPosition = CreateBoard.NewPiecePosition(cellsList[currStep]);
     
             // intermediate postion
             // (Little Up in the air to show jump)
@@ -64,16 +70,17 @@ public static class MovePlayer
             midPosition.y += 1f;
 
             float t = 0;
+            float movementSpeed = 10f;
             while (t < 1) {
                 Player.transform.position = Vector3.Lerp(Player.transform.position, midPosition, t);
-                t += 10f * Time.deltaTime;
+                t += movementSpeed * Time.deltaTime;
                 yield return null;
             }
 
             t = 0;
             while (t < 1) {
                 Player.transform.position = Vector3.Lerp(Player.transform.position, desiredPosition, t);
-                t += 10f * Time.deltaTime;
+                t += movementSpeed * Time.deltaTime;
                 yield return null;
             }
             currStep++;
@@ -86,19 +93,32 @@ public static class MovePlayer
         // Next Turn Preparation
         Player = null;
         // NextPlayerTurn = (NextPlayerTurn + 1) % NumPlayers;
-        ClassObjects.Gameobj.MB.StartCoroutine(RollDice.Routine());
+        ClassObjects.Gameobj.mb.StartCoroutine(RollDice.Routine());
+
+        isRunning = false;
     }
 
     public static void PlayerToMove(GameObject player)
     {
+        if (!isRunning)
+            return;
+        
         if (Player != null)
             return;
 
-        int playerGroup = player.GetComponent<PlayerMetaData>().PlayerGroup;
-        Debug.Log("Player Group is " + playerGroup);
+        int playerGroup = player.GetComponent<PlayerMetaData>().playerGroup;
+        if (playerGroup != PossibleMoves.CurrPlayerTurn)
+            return;
+        // Debug.Log($"Player Group is {playerGroup}");
+
+        int playerPawn = player.GetComponent<PlayerMetaData>().pawnNum;
+
+        Debug.Log($"player pawn is {playerPawn}");
+
+        if (!PossibleMoves.ValidPawn[playerPawn])
+            return;
         
-        if (playerGroup == NextPlayerTurn)
-            Player = player;
+        Player = player;
         
         // for (int i = 0; i < 4; i++)
         // {
@@ -106,25 +126,4 @@ public static class MovePlayer
         //     blinkPlayerP[i].Reset();
         // }
     }
-
-    public static List<GameObject> FindCellList(int numMoves, GameObject player)
-    {
-        PlayerMetaData playerMetaData = Player.GetComponent<PlayerMetaData>();
-        int playerGroup = playerMetaData.PlayerGroup;
-        GameObject currCell = playerMetaData.currCell;
-        GameObject nextCell;
-
-        List<GameObject> cellsList = new List<GameObject>();
-        int i = 0;
-        while (i <= numMoves && currCell != null)
-        {
-            cellsList.Add(currCell);
-            nextCell = currCell.GetComponent<CellMetaData>().GetNextGameObj(playerGroup);
-            currCell = nextCell;
-            i++;
-        }
-
-        return cellsList;
-    }
-
 }

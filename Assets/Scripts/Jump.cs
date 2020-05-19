@@ -5,11 +5,11 @@ using UnityEngine;
 public class Jump : MonoBehaviour
 {
     // Start is called before the first frame update
-    private float movementSpeed;
-    private GameObject nextCell; 
+    private float _movementSpeed;
+    private GameObject _nextCell; 
     void Start()
     {
-        movementSpeed = 10f;
+        _movementSpeed = 10f;
     }
     
     private void OnMouseDown()
@@ -18,8 +18,8 @@ public class Jump : MonoBehaviour
         if (currCell == null)
             Debug.Log("curr cell is null");
         
-        nextCell = currCell.GetComponent<CellMetaData>().GetNextGameObj();
-        if (nextCell == null)
+        _nextCell = currCell.GetComponent<CellMetaData>().GetNextGameObj();
+        if (_nextCell == null)
             Debug.Log("next cell is null");
         
         StartCoroutine("MovePeice");
@@ -28,23 +28,23 @@ public class Jump : MonoBehaviour
     // Coroutine to animate movement from one cell to another
     IEnumerator MovePeice()
     {
-        Vector3 desiredPosition = CreateBoard.NewPiecePostion(nextCell);
+        Vector3 desiredPosition = CreateBoard.NewPiecePosition(_nextCell);
 
         // intermediate postion (Little Up in the air to show jump)
         Vector3 midPosition = (transform.position + desiredPosition) / 2;
         midPosition.y = midPosition.y + 0.5f;
         
         while (midPosition != transform.position) {
-            transform.position = Vector3.MoveTowards(transform.position, midPosition, movementSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, midPosition, _movementSpeed * Time.deltaTime);
             yield return null;
         }
 
         while (desiredPosition != transform.position) {
-            transform.position = Vector3.MoveTowards(transform.position, desiredPosition, movementSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, desiredPosition, _movementSpeed * Time.deltaTime);
             yield return null;
         }
 
-        GetComponent<PlayerMetaData>().currCell = nextCell;
+        GetComponent<PlayerMetaData>().currCell = _nextCell;
     }
     
     

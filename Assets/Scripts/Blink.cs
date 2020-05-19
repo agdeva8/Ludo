@@ -6,7 +6,7 @@ using UnityEngine;
 public class Blink : MonoBehaviour
 { 
     [SerializeField]  [Range(0f, 1f)] float lerpTime;
-    [NonSerialized] public  float refreshRate;
+    [NonSerialized] public  float RefreshRate;
     public  Material objMaterial;
 
     public Color lightColor;
@@ -19,7 +19,7 @@ public class Blink : MonoBehaviour
     void Start()
     {
         // objMaterial = GetComponent<Material>();
-        refreshRate = 0.01f;
+        RefreshRate = 0.01f;
         _origColor = objMaterial.color;
     }
 
@@ -47,7 +47,7 @@ public class Blink : MonoBehaviour
                 Color newColor = Color.Lerp(firstColor, secondColor, t);
                 t += lerpTime;
                 objMaterial.color = newColor;
-                yield return new WaitForSeconds(refreshRate);
+                yield return new WaitForSeconds(RefreshRate);
             }
 
             Color temp = firstColor;

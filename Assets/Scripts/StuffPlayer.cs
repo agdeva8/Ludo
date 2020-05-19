@@ -17,7 +17,7 @@ public class StuffPlayer
         GameObject cell = GameObject.Find("demoCell");
         CellMetaData cellMetaData = cell.GetComponent<CellMetaData>();
 
-        cellMetaData.Players.Clear();
+        cellMetaData.players.Clear();
         cellMetaData.AddPlayer(p0);
         cellMetaData.AddPlayer(p1);
         cellMetaData.AddPlayer(p2);

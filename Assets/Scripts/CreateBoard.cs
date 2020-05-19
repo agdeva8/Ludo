@@ -7,7 +7,7 @@ using UnityEngine.Profiling.Memory.Experimental;
 // TODO Refactoring the code
 public class CreateBoard {
     private static float a = 1;
-    public static int n;
+    public static int N;
     private static float theta;
     private static GameObject[] insideCorners;
     private static List<GameObject[,]> cells;
@@ -25,7 +25,7 @@ public class CreateBoard {
     [MenuItem("Tools/Create Board/Players 4")]
     public static void NPlayers4()
     {
-        n = 4;
+        N = 4;
 
         board = GameObject.Find("Board");
         if (board != null)
@@ -36,7 +36,7 @@ public class CreateBoard {
     [MenuItem("Tools/Create Board/Players 5")]
     public static void NPlayers5()
     {
-        n = 5;
+        N = 5;
         board = GameObject.Find("Board");
         if (board != null)
             GameObject.DestroyImmediate(board);
@@ -46,7 +46,7 @@ public class CreateBoard {
     [MenuItem("Tools/Create Board/Players 6")]
     public static void NPlayers6()
     {
-        n = 6;
+        N = 6;
         board = GameObject.Find("Board");
         if (board != null)
             GameObject.DestroyImmediate(board);
@@ -56,7 +56,7 @@ public class CreateBoard {
     [MenuItem("Tools/Create Board/Players 7")]
     public static void NPlayers7()
     {
-        n = 7;
+        N = 7;
         board = GameObject.Find("Board");
         if (board != null)
             GameObject.DestroyImmediate(board);
@@ -66,7 +66,7 @@ public class CreateBoard {
     [MenuItem("Tools/Create Board/Players 8")]
     public static void NPlayers8()
     {
-        n = 8;
+        N = 8;
         board = GameObject.Find("Board");
         if (board != null)
             GameObject.DestroyImmediate(board);
@@ -76,9 +76,9 @@ public class CreateBoard {
     // [MenuItem("Tools/Create Board")]
     public static void Main()
     {
-        theta = (float) (360.0 / n);
+        theta = (float) (360.0 / N);
         board = new GameObject("Board");
-        insideCorners = new GameObject[n];
+        insideCorners = new GameObject[N];
         cells = new List<GameObject[,]>();
         stopPointCubes = new List<GameObject>();
         cellScale = new Vector3(1, 1, 1);
@@ -138,11 +138,11 @@ public class CreateBoard {
     {
         // cells[0][2, 4].GetComponent<CellMetaData>().SetNextGameObj(cells[0][2, 3]);
         // cells[0][2, 4].GetComponent<CellMetaData>()._nextObjOtherPlayer = cells[0][2, 3];
-        for (int player = 0; player < n; player++)
+        for (int player = 0; player < N; player++)
         {
             for (int i = 5; i > 0; i--)
                 cells[player][2, i].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[player][2, i - 1]);
-            cells[player][2, 0].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[(player + 1) % n][0, 0]); 
+            cells[player][2, 0].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[(player + 1) % N][0, 0]); 
             //
             for (int i = 0; i < 5; i++)
                 cells[player][0, i].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[player][0, i + 1]);
@@ -199,7 +199,7 @@ public class CreateBoard {
         GameObject nextCell = GameObject.Find("C2");
         GameObject player = GameObject.Find("P1");
 
-        player.transform.position = NewPiecePostion(currCell);
+        player.transform.position = NewPiecePosition(currCell);
     } 
     
     // moving player one step ahead
@@ -217,7 +217,7 @@ public class CreateBoard {
     private static void CreateStartHomes()
     {
         // initializing centroid
-        startHomeCentroid = new Vector3[n];
+        startHomeCentroid = new Vector3[N];
         
         // Main Parent of Start Home
         GameObject homeParent = new GameObject("Start Home");
@@ -229,10 +229,10 @@ public class CreateBoard {
         GameObject inParent = new GameObject("In Home");
         inParent.transform.parent = homeParent.transform;
         
-        Vector3[,] outCorners = new Vector3[n, 2];
+        Vector3[,] outCorners = new Vector3[N, 2];
 
         GameObject dummy = new GameObject("Dummy");
-        for (int player = 0; player < n; player++)
+        for (int player = 0; player < N; player++)
         {
             dummy.transform.parent = cells[player][2, 5].transform;
             dummy.transform.localPosition = new Vector3(0, 0, 0);
@@ -247,12 +247,12 @@ public class CreateBoard {
             outCorners[player, 1] = dummy.transform.position;
         }
 
-        for (int player = 0; player < n; player++)
+        for (int player = 0; player < N; player++)
         {
             List<Vector3> vertices = new List<Vector3>();
             List<int> triangles = new List<int>();
 
-            Vector3 pos = insideCorners[(player + 1) % n].transform.position;
+            Vector3 pos = insideCorners[(player + 1) % N].transform.position;
             pos.y = (float) (pos.y + 0.5);
             vertices.Add(pos);
 
@@ -260,7 +260,7 @@ public class CreateBoard {
 
             // only  for n = 4
 
-            if (n == 4)
+            if (N == 4)
             {
                 dummy.transform.parent = cells[player][2, 5].transform;
                 dummy.transform.localPosition = new Vector3(0, 0, 0);
@@ -269,14 +269,14 @@ public class CreateBoard {
                 vertices.Add(dummy.transform.position);
             }
 
-            vertices.Add(outCorners[(player + 1) % n, 1]);
+            vertices.Add(outCorners[(player + 1) % N, 1]);
 
             GameObject outPiece = new GameObject($"OutHome {player}");
             outPiece.transform.parent = outParent.transform;
             MeshFilter outPieceMf = outPiece.AddComponent<MeshFilter>();
             MeshRenderer outPieceMr = outPiece.AddComponent<MeshRenderer>();
 
-            if (n == 4)
+            if (N == 4)
             {
                 triangles.AddRange(new List<int>() {0, 1, 2});
                 triangles.AddRange(new List<int>() {2, 3, 0});
@@ -371,13 +371,13 @@ public class CreateBoard {
         outParent.transform.parent = outPp.transform;
 
         centerPieces = new List<GameObject>();
-        for (int player = 0; player < n; player++) {
+        for (int player = 0; player < N; player++) {
             List<Vector3> vertices = new List<Vector3>();
             List<int> triangles = new List<int>();
 
             vertices.Add(centerPos);
             vertices.Add(insideCorners[player].transform.position);
-            vertices.Add(insideCorners[(player + 1) % n].transform.position);
+            vertices.Add(insideCorners[(player + 1) % N].transform.position);
 
             for (int i = 0; i < 3; i++) {
                 vertices[i] =  new Vector3(vertices[i].x, 0.5f, vertices[i].z);
@@ -422,7 +422,7 @@ public class CreateBoard {
     }
 
     private static Vector3 GetCenterPos() {
-        Vector3 centerPos = cells[(int)(n / 2)][1, 0].transform.position +  
+        Vector3 centerPos = cells[(int)(N / 2)][1, 0].transform.position +  
                             cells[0][1, 0].transform.position;
 
         centerPos = centerPos / 2;
@@ -430,39 +430,37 @@ public class CreateBoard {
     }
 
 
-    public static Vector3 NewPiecePostion(GameObject cell)
+    public static Vector3 NewPiecePosition(GameObject cell)
     {
-        GameObject tempGO = new GameObject("temp");
-        tempGO.transform.parent = cell.transform;
+        GameObject tempGo = new GameObject("temp");
+        tempGo.transform.parent = cell.transform;
 
-        tempGO.transform.localPosition = Vector3.up * (0.5f + 0.01f);
-        tempGO.transform.localRotation = Quaternion.Euler(Vector3.zero);
+        // 0.5f to bring to level and 0.01 to avoid overlaps
+        tempGo.transform.localPosition = Vector3.up * (0.5f + 0.01f);
+        tempGo.transform.localRotation = Quaternion.Euler(Vector3.zero);
         
-        Vector3 retPosition = tempGO.transform.position;
+        Vector3 retPosition = tempGo.transform.position;
         
-        GameObject.DestroyImmediate(tempGO);
-        // 0.5f to bring it on same level
-        // 0.001f to avoid overriding if on same level
-        // retPosition.y = retPosition.y + 0.5f + 0.001f;
+        GameObject.DestroyImmediate(tempGo);
 
         return retPosition;
     }
     
+    [MenuItem("Tools/PlacePiece")]
     private static void PlacePiecesStart() {
         playerPiecesParent = new GameObject("Players");
         playerPiecesParent.transform.parent = board.transform;
         
-        playerPieces = new GameObject[n, 4];
-        startHomeCells = new GameObject[n, 4];
+        playerPieces = new GameObject[N, 4];
+        startHomeCells = new GameObject[N, 4];
         
         GameObject startHomeCellParent = new GameObject("Start Home Cells");
         startHomeCellParent.transform.parent = board.transform;
         
-        for (int player = 0; player < n; player++)
+        for (int player = 0; player < N; player++)
         {
             for (int i = 0; i < 4; i++)
             {
-                GameObject playerPiece = playerPieces[player, i];
                 playerPieces[player, i] = InstObj(new Vector3(0, 0, 0),
                     "PreFabs/PlayerPeice", playerPiecesParent);
             
@@ -486,13 +484,14 @@ public class CreateBoard {
                 PlayerMetaData playerMetaData = playerPieces[player, i].GetComponent<PlayerMetaData>();
                 playerMetaData.currCell = startHomeCells[player, i];
                 playerMetaData.homeCell = startHomeCells[player, i];
-                playerMetaData.PlayerGroup = player;
+                playerMetaData.playerGroup = player;
+                playerMetaData.pawnNum = i;
                 
                 startHomeCells[player, i].GetComponent<CellMetaData>().AddPlayer(playerPieces[player, i]);
             
-                // placing player piece
-                playerPieces[player, i].transform.position = NewPiecePostion(startHomeCells[player, i]);
-                playerPieces[player, i].transform.localRotation = Quaternion.Euler(-90, 0, 0);
+                // // placing player piece
+                // playerPieces[player, i].transform.position = NewPiecePosition(startHomeCells[player, i]);
+                // playerPieces[player, i].transform.localRotation = Quaternion.Euler(-90, 0, 0);
             
                 // changing primary attributes
                 playerPieces[player, i].name = $"Player{player}{i}";
@@ -514,7 +513,7 @@ public class CreateBoard {
     // }
     
     private static void AddStopPoints() {
-        for (int player = 0; player < n; player++) {
+        for (int player = 0; player < N; player++) {
             PlaceStopCube(player, 0, 3);
             PlaceStopCube(player, 2, 4);
         }
@@ -530,7 +529,7 @@ public class CreateBoard {
     }
 
     private static void SetBasicColor(){
-        for (int player= 0; player < n; player++) {
+        for (int player= 0; player < N; player++) {
             for (int i = 0; i < 5; i++)
                 ChangeColor(cells[player][1, i], playerColors[player]);
             ChangeColor(cells[player][2, 4], playerColors[player]);
@@ -543,11 +542,11 @@ public class CreateBoard {
     }
 
     public static void CreateCenter() {
-        Vector3 centerPos = cells[(int)(n / 2)][1, 0].transform.position +  
+        Vector3 centerPos = cells[(int)(N / 2)][1, 0].transform.position +  
                             cells[0][1, 0].transform.position;
 
         centerPos = centerPos / 2;
-        Debug.Log(cells[(int)(n / 2)][1, 0].transform.position); 
+        Debug.Log(cells[(int)(N / 2)][1, 0].transform.position); 
 
         GameObject centerPiece = (GameObject)GameObject.Instantiate(Resources.Load("PreFabs/Hexagon"),
                                         centerPos,
@@ -555,7 +554,7 @@ public class CreateBoard {
     }
 
     public static void CreateRect() {
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < N; i++) {
             insideCorners[i] = new GameObject("Rect Parent " + i.ToString());
             if (i >= 1) {
                 insideCorners[i].transform.parent = insideCorners[i - 1].transform;

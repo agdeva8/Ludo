@@ -20,7 +20,7 @@ public class CellMetaData : MonoBehaviour
     // Check if Curr Cell is Stop
     public bool isStop;
 
-    public List<GameObject> Players;
+    [FormerlySerializedAs("Players")] public List<GameObject> players;
 
     public void SetNextGameObj(GameObject otherPlayer, GameObject samePlayer)
     {
@@ -64,7 +64,7 @@ public class CellMetaData : MonoBehaviour
     public void AddPlayer(GameObject player)
     {
         player.transform.parent = gameObject.transform;
-        Players.Add(player);
+        players.Add(player);
         // player.transform.localPosition = new Vector3(0, 0.5f, 0); 
         player.transform.rotation = gameObject.transform.rotation;
         player.transform.localRotation = Quaternion.Euler(-90, 0, 0);
@@ -74,7 +74,7 @@ public class CellMetaData : MonoBehaviour
 
     public void RemovePlayer(GameObject player)
     {
-        Players.Remove(player);
+        players.Remove(player);
         
         RecalculateScalesPos();
     }
@@ -82,18 +82,18 @@ public class CellMetaData : MonoBehaviour
     public void RecalculateScalesPos()
     {
         // z is the height of peice
-        int numPlayers = Players.Count;
+        int numPlayers = players.Count;
         
         if (numPlayers == 0)
             return;
         
         Vector3 newScale = new Vector3(84, 84, 84);
-        Vector2 rc = FindRC(numPlayers);
+        Vector2 rc = FindRc(numPlayers);
         int r = (int) rc.x;
         int c = (int) rc.y;
 
-        Debug.Log($"Num players is {numPlayers}");
-        Debug.Log(message: $"r, c is {r} , {c}");
+        // Debug.Log($"Num players is {numPlayers}");
+        // Debug.Log(message: $"r, c is {r} , {c}");
 
         switch (numPlayers)
         {
@@ -109,14 +109,14 @@ public class CellMetaData : MonoBehaviour
         List<int> rPostionIndices = PositionIndices(r);
         List<int> cPositionIndices = PositionIndices(c);
 
-        for (int i = 0; i < rPostionIndices.Count; i++)
-            Debug.Log($"RPos Indices is {rPostionIndices[i]}");
+        // for (int i = 0; i < rPostionIndices.Count; i++)
+        //     Debug.Log($"RPos Indices is {rPostionIndices[i]}");
 
-        int PlayerIdx = 0;
+        int playerIdx = 0;
 
         bool done = false;
         
-        Debug.Log($"rtranslate {rUnitTranslate} , cTranslate {cUnitTranslate}");
+        // Debug.Log($"rtranslate {rUnitTranslate} , cTranslate {cUnitTranslate}");
         
         foreach (int rPIndex in rPostionIndices)
         {
@@ -124,31 +124,31 @@ public class CellMetaData : MonoBehaviour
                 break;
             foreach (int cPIndex in cPositionIndices)
             {
-                if (PlayerIdx == numPlayers)
+                if (playerIdx == numPlayers)
                 {
                     done = true;
                     break;
                 }
 
-                Debug.Log(message: $"rIndex {rPIndex} , cIndex {cPIndex}");
-                GameObject player = Players[PlayerIdx];
+                // Debug.Log(message: $"rIndex {rPIndex} , cIndex {cPIndex}");
+                GameObject player = players[playerIdx];
                 // Scaling Players accordingly
-                Players[PlayerIdx].transform.localScale = newScale;
+                players[playerIdx].transform.localScale = newScale;
 
                 // translating players
-                Players[PlayerIdx].transform.localPosition = new Vector3( rPIndex * rUnitTranslate, 0.5f + 0.02f, 
+                players[playerIdx].transform.localPosition = new Vector3( rPIndex * rUnitTranslate, 0.5f + 0.02f, 
                                                 cPIndex * cUnitTranslate);
                 // Players[PlayerIdx].transform.Translate( rPIndex * rUnitTranslate,
                 //                                 cPIndex * cUnitTranslate, 0);
 
-                PlayerIdx++;
+                playerIdx++;
             }
         }
     }
 
     // It converts a number(n) into row, col pair
     // such that r*c >= n
-    private Vector2 FindRC(int n)
+    private Vector2 FindRc(int n)
     {
         int r = 1;
         int c = 1;

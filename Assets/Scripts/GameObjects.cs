@@ -5,6 +5,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// It will contain All GameObjects and many of its main components used in various scripts
@@ -18,48 +19,48 @@ public class GameObjects : MonoBehaviour
 {
     // TODO: change name from DiceNUm to DiceNum
     // DiceNum GameObject
-    public GameObject DiceNum;
+    [FormerlySerializedAs("DiceNum")] public GameObject diceNum;
     // Main Mesh of the DiceNum object
-    public TextMeshProUGUI DiceScore;
+    [FormerlySerializedAs("DiceScore")] public TextMeshProUGUI diceScore;
         // DiceNum.GetComponent<TextMeshProUGUI>();
     
     // Dice Game Object
-    public GameObject Dice;
-    public Transform DiceTransform;
-    public Rigidbody DiceRb;
+    [FormerlySerializedAs("Dice")] public GameObject dice;
+    [FormerlySerializedAs("DiceTransform")] public Transform diceTransform;
+    [FormerlySerializedAs("DiceRb")] public Rigidbody diceRb;
          
     // MonoBehaviour Object
     // Empty GameObject for MonoBehaviour
     // public static readonly GameObject MonoB = GameObject.Find("MonoB");
     // public static MonoBehaviour MB = MonoB.AddComponent<MonoBehaviour>();
-    public MonoBehaviour MB;
+    [FormerlySerializedAs("MB")] public MonoBehaviour mb;
     
     // Player to check if the code is running 
-    public GameObject DebugPlayer;
+    [FormerlySerializedAs("DebugPlayer")] public GameObject debugPlayer;
     
-    public GameObject DebugPlayer2;
+    [FormerlySerializedAs("DebugPlayer2")] public GameObject debugPlayer2;
     
     // Player Pieces Array
     // public GameObject[,] Players = new GameObject[8,4];
 
-    public int NumPlayers;
-    public GameObject[,] Players;
+    [FormerlySerializedAs("NumPlayers")] public int numPlayers;
+    [FormerlySerializedAs("Players")] public GameObject[,] players;
 
-    public GameObject[] HomeOut;
+    [FormerlySerializedAs("HomeOut")] public GameObject[] homeOut;
     
     void Start()
     {
-        Players = new GameObject[NumPlayers,4];
+        players = new GameObject[numPlayers,4];
 
-        DebugPlayer2 = GameObject.Find("Player10");
+        debugPlayer2 = GameObject.Find("Player10");
         
-        if (DebugPlayer2 == null)
+        if (debugPlayer2 == null)
             Debug.Log("Cant find Player");
         
         // Assigning Player Variables using Find
-        for (int i = 0; i < NumPlayers; i++)
+        for (int i = 0; i < numPlayers; i++)
             for (int j = 0; j < 4; j++)
-                Players[i, j] = GameObject.Find($"Player{i}{j}"); 
+                players[i, j] = GameObject.Find($"Player{i}{j}"); 
                 
     }
     // public static void AssignPlayers()
