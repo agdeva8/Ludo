@@ -50,16 +50,15 @@ public static class MovePlayer
         Debug.Log($"cell count is {cellsCount}");
         GameObject lastCell = cellsList[cellsCount- 1];
         
+        // Rescale Current cell players
+        cellsList[0].GetComponent<CellMetaData>().RemovePlayer(Player);
         
         // cellsList[0].GetComponent<CellMetaData>().AddPlayer(Player);
         // playerMetaData.currCell.GetComponent<CellMetaData>().RemovePlayer(Player);
-        Player.transform.localScale = new Vector3(84, 84, 84);
         // show movement
         int currStep = 1;
         while (currStep < cellsCount)
         {
-            // Rescale Current cell players
-            cellsList[0].GetComponent<CellMetaData>().RemovePlayer(Player);
             
             // Show Movement
             Vector3 desiredPosition = CreateBoard.NewPiecePosition(cellsList[currStep]);
@@ -87,8 +86,7 @@ public static class MovePlayer
         }
         
         // Last Cell Mechanics
-        playerMetaData.currCell = lastCell;
-        lastCell.GetComponent<CellMetaData>().AddPlayer(Player);
+        LastCellMechanics.Main(Player, lastCell);
 
         // Updating Turn;
         // if dice score was not 6

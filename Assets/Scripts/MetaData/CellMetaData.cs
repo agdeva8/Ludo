@@ -20,7 +20,7 @@ public class CellMetaData : MonoBehaviour
     // Check if Curr Cell is Stop
     public bool isStop;
 
-    [FormerlySerializedAs("Players")] public List<GameObject> players;
+    public List<GameObject> players;
 
     public void SetNextGameObj(GameObject otherPlayer, GameObject samePlayer)
     {
@@ -69,12 +69,19 @@ public class CellMetaData : MonoBehaviour
         player.transform.rotation = gameObject.transform.rotation;
         player.transform.localRotation = Quaternion.Euler(-90, 0, 0);
         
+        // Adding this info in PlayerMetaData
+        player.GetComponent<PlayerMetaData>().currCell = this.gameObject;
+        
         RecalculateScalesPos();
     }
 
     public void RemovePlayer(GameObject player)
     {
         players.Remove(player);
+        
+        player.transform.localScale = new Vector3(84, 84, 84);
+        float y = player.transform.localPosition.y; 
+        player.transform.localPosition = new Vector3(0, y, 0);
         
         RecalculateScalesPos();
     }
