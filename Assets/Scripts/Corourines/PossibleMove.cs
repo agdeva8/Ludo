@@ -10,7 +10,7 @@ public class PossibleMoves
 
     public static bool[] ValidPawn;
 
-    public static int CurrPlayerTurn = 2;
+    public static int CurrPlayerTurn = 0;
     // Start is called before the first frame update
     public static void Main()
     {
@@ -56,11 +56,17 @@ public class PossibleMoves
             }
         }
         
+        StartBlinkPawns();
+        
         Debug.Log($"Num of valid moves {numValidMoves}");
         if (numValidMoves > 0)
             ClassObjects.Gameobj.mb.StartCoroutine(MovePlayer.Routine());
         else
+        {
+            // Updating Turn;
+            UpdateCurrPlayerTurn();
             ClassObjects.Gameobj.mb.StartCoroutine(RollDice.Routine());
+        }
     }
     
     // including first cell also,
@@ -88,5 +94,28 @@ public class PossibleMoves
     public static void UpdateCurrPlayerTurn()
     {
         CurrPlayerTurn = (CurrPlayerTurn + 1) % 4;
+    }
+
+    public static void StartBlinkPawns()
+    {
+        for (int pi = 0; pi < 4; pi++)
+        {
+            if (ValidPawn[pi])
+            {
+               ClassObjects.Gameobj.players[CurrPlayerTurn, pi].GetComponent<Blink>().StartRoutine(); 
+            }
+        }
+    }
+
+    public static void StopBlinkPawns()
+    {
+        for (int pi = 0; pi < 4; pi++)
+        {
+            if (ValidPawn[pi])
+            {
+               ClassObjects.Gameobj.players[CurrPlayerTurn, pi].GetComponent<Blink>().Stop(); 
+            }
+            
+        }
     }
 }

@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class Blink : MonoBehaviour
 { 
-    [SerializeField]  [Range(0f, 1f)] float lerpTime;
+    [SerializeField]  [Range(0f, 1f)] float lerpTime = 0.04f;
     [NonSerialized] public  float RefreshRate;
-    public  Material objMaterial;
+    [NonSerialized] public  Material objMaterial;
 
     public Color lightColor;
     public Color darkColor;
@@ -18,6 +18,7 @@ public class Blink : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        objMaterial = GetComponent<Renderer>().material;
         // objMaterial = GetComponent<Material>();
         RefreshRate = 0.01f;
         _origColor = objMaterial.color;
@@ -59,7 +60,8 @@ public class Blink : MonoBehaviour
 
     public void Stop()
     {
-        StopCoroutine(_coroutine);
+        if (_coroutine != null)
+            StopCoroutine(_coroutine);
         objMaterial.color = _origColor;
     }
  

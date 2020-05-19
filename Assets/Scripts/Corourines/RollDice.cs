@@ -21,8 +21,6 @@ public static class RollDice
 
         isRunning = true;
         
-        // Updating Turn;
-        PossibleMoves.UpdateCurrPlayerTurn();
         
         // Debug.Log($"Roll Dice Update Coroutine{count}");
         // count++;
@@ -87,7 +85,7 @@ public static class RollDice
                 ClassObjects.Gameobj.diceRb.velocity = Vector3.zero; 
             }
 
-            if (ClassObjects.Gameobj.diceTransform.localPosition.y > 2)
+            if (ClassObjects.Gameobj.diceTransform.localPosition.y > 5)
             {
                 float tx = Random.Range(0, 200);
                 float ty = Random.Range(0, 200);

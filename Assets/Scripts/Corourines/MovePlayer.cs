@@ -90,6 +90,11 @@ public static class MovePlayer
         playerMetaData.currCell = lastCell;
         lastCell.GetComponent<CellMetaData>().AddPlayer(Player);
 
+        // Updating Turn;
+        // if dice score was not 6
+        if (PossibleMoves.DiceNum != 6)
+            PossibleMoves.UpdateCurrPlayerTurn();
+        
         // Next Turn Preparation
         Player = null;
         // NextPlayerTurn = (NextPlayerTurn + 1) % NumPlayers;
@@ -119,6 +124,9 @@ public static class MovePlayer
             return;
         
         Player = player;
+        
+        // Stopping Cell Blinking
+        PossibleMoves.StopBlinkPawns();
         
         // for (int i = 0; i < 4; i++)
         // {
