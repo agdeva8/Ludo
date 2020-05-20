@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class StuffPlayer 
 {
-    [MenuItem("Tools/Stuff Player")]
+    // [MenuItem("Tools/Stuff Player")]
     public static void Stuff()
     {
         var p0 = GameObject.Find("Player00");

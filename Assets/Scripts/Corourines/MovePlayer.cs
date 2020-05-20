@@ -10,16 +10,10 @@ public static class MovePlayer
 {
     public static GameObject Player;
     public static int NumPlayers = 4;
-    public static Coroutine[] MovablePlayersRoutines;
-    
-    static BlinkHome[] blinkPlayerP = new BlinkHome[4];
-    static GameObject[] playerP = new GameObject[4];
-    static Coroutine[] blinkRoutine = new Coroutine[4];
     
     static bool isRunning;
     public static void Start()
     {
-        MovablePlayersRoutines = new Coroutine[4];
     }
 
     public static IEnumerator Routine()
@@ -27,75 +21,90 @@ public static class MovePlayer
 
         Debug.Log("in Routine");
         isRunning = true;
-        // PlayerP stands for playerPawn
-        // for (int i = 0; i < 4; i++)
-        // {
-        //     blinkPlayerP[i] = new BlinkHome();
-        //     playerP[i] = ClassObjects.Gameobj.Players[NextPlayerTurn, i];
-        //     blinkRoutine[i] = ClassObjects.Gameobj.MB.StartCoroutine(blinkPlayerP[i].Routine(playerP[i]));
-        // }
-
+        
+        // Resetting any player data 
+        Player = null;
         Debug.Log("Waiting for player");
-        while (Player == null)
-            yield return null;
-        
-        Debug.Log("now showing movement");
-        
-        PlayerMetaData playerMetaData = Player.GetComponent<global::PlayerMetaData>();
 
-        List<GameObject> cellsList = PossibleMoves.CellsList[playerMetaData.pawnNum]; 
-
-        int cellsCount = cellsList.Count;
-
-        Debug.Log($"cell count is {cellsCount}");
-        GameObject lastCell = cellsList[cellsCount- 1];
-        
-        // Rescale Current cell players
-        cellsList[0].GetComponent<CellMetaData>().RemovePlayer(Player);
-        
-        // cellsList[0].GetComponent<CellMetaData>().AddPlayer(Player);
-        // playerMetaData.currCell.GetComponent<CellMetaData>().RemovePlayer(Player);
-        // show movement
-        int currStep = 1;
-        while (currStep < cellsCount)
+        // Checking if the player has something to move
+        if (PossibleMoves.NumValidMoves > 0)
         {
-            
-            // Show Movement
-            Vector3 desiredPosition = CreateBoard.NewPiecePosition(cellsList[currStep]);
-    
-            // intermediate postion
-            // (Little Up in the air to show jump)
-            Vector3 midPosition = (Player.transform.position + desiredPosition) / 2;
-            midPosition.y += 1f;
+            // Waiting for user to click a player
+            // when number moves > 1 
+            // else auto running;
+            if (PossibleMoves.NumValidMoves > 1)
+            {
+                while (Player == null)
+                    yield return null;
+            }
+            else
+            {
+                int currPlayerTurn = PossibleMoves.CurrPlayerTurn;
+                int currPawn = 0;
 
-            float t = 0;
-            float movementSpeed = 10f;
-            while (t < 1) {
-                Player.transform.position = Vector3.Lerp(Player.transform.position, midPosition, t);
-                t += movementSpeed * Time.deltaTime;
-                yield return null;
+                while (currPawn < 4 && !PossibleMoves.ValidPawn[currPawn])
+                    currPawn++;
+
+                Player = ClassObjects.Gameobj.players[currPlayerTurn, currPawn];
             }
 
-            t = 0;
-            while (t < 1) {
-                Player.transform.position = Vector3.Lerp(Player.transform.position, desiredPosition, t);
-                t += movementSpeed * Time.deltaTime;
-                yield return null;
+            Debug.Log("now showing movement");
+
+            PlayerMetaData playerMetaData = Player.GetComponent<global::PlayerMetaData>();
+
+            List<GameObject> cellsList = PossibleMoves.CellsList[playerMetaData.pawnNum];
+
+            int cellsCount = cellsList.Count;
+
+            Debug.Log($"cell count is {cellsCount}");
+            GameObject lastCell = cellsList[cellsCount - 1];
+
+            // Rescale Current cell players
+            cellsList[0].GetComponent<CellMetaData>().RemovePlayer(Player);
+
+            // cellsList[0].GetComponent<CellMetaData>().AddPlayer(Player);
+            // playerMetaData.currCell.GetComponent<CellMetaData>().RemovePlayer(Player);
+            // show movement
+            int currStep = 1;
+            while (currStep < cellsCount)
+            {
+
+                // Show Movement
+                Vector3 desiredPosition = CreateBoard.NewPiecePosition(cellsList[currStep]);
+
+                // intermediate postion
+                // (Little Up in the air to show jump)
+                Vector3 midPosition = (Player.transform.position + desiredPosition) / 2;
+                midPosition.y += 1f;
+
+                float t = 0;
+                float movementSpeed = 10f;
+                while (t < 1)
+                {
+                    Player.transform.position = Vector3.Lerp(Player.transform.position, midPosition, t);
+                    t += movementSpeed * Time.deltaTime;
+                    yield return null;
+                }
+
+                t = 0;
+                while (t < 1)
+                {
+                    Player.transform.position = Vector3.Lerp(Player.transform.position, desiredPosition, t);
+                    t += movementSpeed * Time.deltaTime;
+                    yield return null;
+                }
+
+                currStep++;
             }
-            currStep++;
+
+            // Last Cell Mechanics
+            LastCellMechanics.Main(Player, lastCell);
         }
-        
-        // Last Cell Mechanics
-        LastCellMechanics.Main(Player, lastCell);
 
         // Updating Turn;
         // if dice score was not 6
-        if (PossibleMoves.DiceNum != 6)
-            PossibleMoves.UpdateCurrPlayerTurn();
-        
-        // Next Turn Preparation
-        Player = null;
-        // NextPlayerTurn = (NextPlayerTurn + 1) % NumPlayers;
+        // if (PossibleMoves.DiceNum != 6)
+        PossibleMoves.UpdateCurrPlayerTurn();
         ClassObjects.Gameobj.mb.StartCoroutine(RollDice.Routine());
 
         isRunning = false;

@@ -10,7 +10,14 @@ public class PossibleMoves
 
     public static bool[] ValidPawn;
 
+    public static int NumValidMoves;
+
     public static int CurrPlayerTurn = 0;
+
+    public static int GiveAdditionalChance = 0;
+
+    public static int RecentSixesCount = 0;
+    
     // Start is called before the first frame update
     public static void Main()
     {
@@ -24,7 +31,8 @@ public class PossibleMoves
         CellsList = new List<GameObject>[4];
         ValidPawn = new bool[4];
 
-        int numValidMoves = 4;
+        NumValidMoves = 4;
+
         for (int pawnNum = 0; pawnNum < 4; pawnNum++)
         {
             GameObject player = ClassObjects.Gameobj.players[playerGroup, pawnNum];
@@ -35,22 +43,27 @@ public class PossibleMoves
             ValidPawn[pawnNum] = true;
 
             int numMoves = 0;
-            if (currCell == homeCell)
+            
+            // Checking condition of three Sixes in One Go
+            if ( !(DiceNum == 6 && RecentSixesCount == 2))
             {
-                if (DiceNum == 6)
-                    numMoves = 1;
+                if (currCell == homeCell)
+                {
+                    if (DiceNum == 6)
+                        numMoves = 1;
+                    else
+                        numMoves = 0;
+                }
                 else
-                    numMoves = 0;
+                    numMoves = DiceNum;
             }
-            else
-                numMoves = DiceNum;
 
             CellsList[pawnNum] = FindCellList(numMoves, player);
 
             if (CellsList[pawnNum].Count <= numMoves || numMoves < 1)
             {
                 ValidPawn[pawnNum] = false;
-                numValidMoves--;
+                NumValidMoves--;
                 
                 Debug.Log($"Invalidating for {pawnNum}");
             }
@@ -58,15 +71,8 @@ public class PossibleMoves
         
         StartBlinkPawns();
         
-        Debug.Log($"Num of valid moves {numValidMoves}");
-        if (numValidMoves > 0)
-            ClassObjects.Gameobj.mb.StartCoroutine(MovePlayer.Routine());
-        else
-        {
-            // Updating Turn;
-            UpdateCurrPlayerTurn();
-            ClassObjects.Gameobj.mb.StartCoroutine(RollDice.Routine());
-        }
+        // Moving the player
+        ClassObjects.Gameobj.mb.StartCoroutine(MovePlayer.Routine());
     }
     
     // including first cell also,
@@ -93,11 +99,31 @@ public class PossibleMoves
 
     public static void UpdateCurrPlayerTurn()
     {
-        CurrPlayerTurn = (CurrPlayerTurn + 1) % 4;
+        // Giving chance when user got 6;
+        if (DiceNum == 6)
+        {
+            GiveAdditionalChance++;
+            RecentSixesCount++;
+        }
+        else
+            RecentSixesCount = 0;
+
+        if (GiveAdditionalChance > 0 && RecentSixesCount < 3)
+            GiveAdditionalChance--;
+        else
+        {
+            CurrPlayerTurn = (CurrPlayerTurn + 1) % 4;
+            RecentSixesCount = 0;
+            GiveAdditionalChance = 0;
+        }
     }
 
     public static void StartBlinkPawns()
     {
+        // Not blinking if only one pawn to move
+        if (NumValidMoves < 2)
+            return;
+        
         for (int pi = 0; pi < 4; pi++)
         {
             if (ValidPawn[pi])

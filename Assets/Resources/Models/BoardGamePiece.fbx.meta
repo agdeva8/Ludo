@@ -1,15 +1,14 @@
 fileFormatVersion: 2
-guid: 21f9544d2915b4ac5a9341977c48d6d5
+guid: 3384908043b8a4e80ac984ef0756d59d
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: White
-    2100002: Black
+    2100000: No Name
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Cube
+    4300000: Cylinder
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -69,7 +68,7 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
-    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
   importAnimation: 1

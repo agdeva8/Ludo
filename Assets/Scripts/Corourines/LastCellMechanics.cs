@@ -50,6 +50,9 @@ public class LastCellMechanics
             defeatedPlayers.Add(currPlayer);
         }
         
+        // Giving chance to player is he/she kicked out other player token
+        PossibleMoves.GiveAdditionalChance++;
+        
         foreach (GameObject defeatedPlayer in defeatedPlayers)
         {
             PushBack2Home(defeatedPlayer);

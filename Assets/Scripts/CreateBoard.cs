@@ -22,7 +22,7 @@ public class CreateBoard {
     private static GameObject board;
     private static Vector3[] startHomeCentroid;
     
-    [MenuItem("Tools/Create Board/Players 4")]
+    // [MenuItem("Tools/Create Board/Players 4")]
     public static void NPlayers4()
     {
         N = 4;
@@ -33,7 +33,7 @@ public class CreateBoard {
         Main();
     }
     
-    [MenuItem("Tools/Create Board/Players 5")]
+    // [MenuItem("Tools/Create Board/Players 5")]
     public static void NPlayers5()
     {
         N = 5;
@@ -43,7 +43,7 @@ public class CreateBoard {
         Main();
     }
     
-    [MenuItem("Tools/Create Board/Players 6")]
+    // [MenuItem("Tools/Create Board/Players 6")]
     public static void NPlayers6()
     {
         N = 6;
@@ -53,7 +53,7 @@ public class CreateBoard {
         Main();
     }
     
-    [MenuItem("Tools/Create Board/Players 7")]
+    // [MenuItem("Tools/Create Board/Players 7")]
     public static void NPlayers7()
     {
         N = 7;
@@ -63,7 +63,7 @@ public class CreateBoard {
         Main();
     }
     
-    [MenuItem("Tools/Create Board/Players 8")]
+    // [MenuItem("Tools/Create Board/Players 8")]
     public static void NPlayers8()
     {
         N = 8;
@@ -446,7 +446,7 @@ public class CreateBoard {
         return retPosition;
     }
     
-    [MenuItem("Tools/PlacePiece")]
+    // [MenuItem("Tools/PlacePiece")]
     private static void PlacePiecesStart() {
         playerPiecesParent = new GameObject("Players");
         playerPiecesParent.transform.parent = board.transform;

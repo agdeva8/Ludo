@@ -37,7 +37,7 @@ public static class RollDice
         // Debug.Log("Mouse button down");
 
         // Check if the Dice Falls on rolling
-        checkFallingRoutine = ClassObjects.Gameobj.mb.StartCoroutine(routine: CheckFalling());
+        // checkFallingRoutine = ClassObjects.Gameobj.mb.StartCoroutine(routine: CheckFalling());
         // Updating Value Displaying to the user
         updateDiceValueRoutine = ClassObjects.Gameobj.mb.StartCoroutine(routine: UpdateDiceValue.Routine());
 
@@ -45,10 +45,10 @@ public static class RollDice
 
         Rigidbody rb = ClassObjects.Gameobj.diceRb;
 
-        float tx = Random.Range(100, 2000);
-        float ty = Random.Range(100, 2000);
-        float tz = Random.Range(100, 2000);
-        rb.AddForce(Vector3.up * 1000);
+        float tx = Random.Range(500, 2000);
+        float ty = Random.Range(500, 2000);
+        float tz = Random.Range(500, 2000);
+        rb.AddForce(Vector3.up * 300);
         rb.AddTorque(tx, ty, tz);
 
         // Waiting For the Dice To Stop
@@ -62,7 +62,7 @@ public static class RollDice
         }
     
         // Stopping Coroutines
-        ClassObjects.Gameobj.mb.StopCoroutine(checkFallingRoutine);
+        // ClassObjects.Gameobj.mb.StopCoroutine(checkFallingRoutine);
         ClassObjects.Gameobj.mb.StopCoroutine(updateDiceValueRoutine);
         
         // Stop home cell blinking
