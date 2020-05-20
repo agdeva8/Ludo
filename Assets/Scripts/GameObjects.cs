@@ -61,7 +61,7 @@ public class GameObjects : MonoBehaviour
         for (int i = 0; i < numPlayers; i++)
             for (int j = 0; j < 4; j++)
                 players[i, j] = GameObject.Find($"Player{i}{j}"); 
-                
+        
     }
     // public static void AssignPlayers()
     // {

@@ -10,9 +10,11 @@ public class LastCellMechanics
     private static List<GameObject> currPlayers;
     private static CellMetaData cellMetaData;
     private static PlayerMetaData playerMetaData;
+    private static int runningProcesses;
     
     public static void Main(GameObject _player, GameObject _lastCell)
     {
+        runningProcesses = 1;
         player = _player;
         lastCell = _lastCell;
 
@@ -26,6 +28,7 @@ public class LastCellMechanics
         if (cellMetaData.isStop || currPlayers.Count == 0)
         {
             cellMetaData.AddPlayer(player);
+            runningProcesses--;
             return;
         }
 
@@ -50,23 +53,58 @@ public class LastCellMechanics
             defeatedPlayers.Add(currPlayer);
         }
         
-        // Giving chance to player is he/she kicked out other player token
-        PossibleMoves.GiveAdditionalChance++;
-        
         foreach (GameObject defeatedPlayer in defeatedPlayers)
         {
-            PushBack2Home(defeatedPlayer);
+            // Giving chance to player is he/she kicked out other player token
+            PossibleMoves.GiveAdditionalChance++;
+            
+            ClassObjects.Gameobj.mb.StartCoroutine(PushBack2Home(defeatedPlayer));
+            runningProcesses++;
         }
         
         cellMetaData.AddPlayer(player);
+        runningProcesses--;
     }
 
-    public static void PushBack2Home(GameObject defeatedPlayer)
+    static IEnumerator PushBack2Home(GameObject defeatedPawn)
     {
-        cellMetaData.RemovePlayer(defeatedPlayer);
-        GameObject homeCell = defeatedPlayer.GetComponent<PlayerMetaData>().homeCell;
-        homeCell.GetComponent<CellMetaData>().AddPlayer(defeatedPlayer);
+        cellMetaData.RemovePlayer(defeatedPawn);
+        PlayerMetaData defeatedPMetaData = defeatedPawn.GetComponent<PlayerMetaData>();
+        GameObject homeCell = defeatedPMetaData.homeCell;
+
+        GameObject currCell = defeatedPMetaData.currCell;
+        while (currCell != homeCell)
+        {
+            Vector3 desiredPosition = CreateBoard.NewPiecePosition(currCell);
+                defeatedPawn.transform.position = Vector3.Lerp( defeatedPawn.transform.position,
+                                                                desiredPosition, 1);
+
+            currCell = currCell.GetComponent<CellMetaData>().GetPrevGameObj(defeatedPMetaData.playerGroup);
+
+            if (currCell == null)
+                currCell = homeCell;
+            
+            // wasnt able to show smooth behvaviour using progress (t) & movementspeed in lerp
+            // so used this. 
+            yield return new WaitForSeconds(0.05f);
+        }
+        
+        // Now formally adding defeated pawn to home cell
+        
+        homeCell.GetComponent<CellMetaData>().AddPlayer(defeatedPawn);
+        runningProcesses--;
     }
+
+    // Running Processes indicates whther some function / coroutine is still running or not
+    // It only gives whether any coroutine/ function is running or not
+    // And not gives which process is running
+    public static bool IsRunning()
+    {
+        if (runningProcesses > 0)
+            return true;
+        return false;
+    }
+        
 
 }
 

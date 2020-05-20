@@ -43,7 +43,7 @@ public class PossibleMoves
             ValidPawn[pawnNum] = true;
 
             int numMoves = 0;
-            
+
             // Checking condition of three Sixes in One Go
             if ( !(DiceNum == 6 && RecentSixesCount == 2))
             {

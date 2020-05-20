@@ -99,12 +99,18 @@ public static class MovePlayer
 
             // Last Cell Mechanics
             LastCellMechanics.Main(Player, lastCell);
+            
+            // Wating for all defeated pawns to go back to their home
+            while (LastCellMechanics.IsRunning())
+                yield return new WaitForSeconds(0.01f);
         }
 
+        
+        // Stop home cell blinking
+        ClassObjects.Gameobj.homeOut[PossibleMoves.CurrPlayerTurn].GetComponent<Blink>().Stop();
         // Updating Turn;
-        // if dice score was not 6
-        // if (PossibleMoves.DiceNum != 6)
         PossibleMoves.UpdateCurrPlayerTurn();
+        // Now Time for Dice Rolling
         ClassObjects.Gameobj.mb.StartCoroutine(RollDice.Routine());
 
         isRunning = false;

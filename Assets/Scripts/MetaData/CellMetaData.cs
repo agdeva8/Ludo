@@ -12,7 +12,8 @@ public class CellMetaData : MonoBehaviour
     public GameObject nextObjOtherPlayer;
     public Vector3 fullScale = new Vector3(84, 84,84);
     // GameObj ID of previous cell 
-    public GameObject prevObj;
+    public GameObject prevObjSamePlayer;
+    public GameObject prevObjOtherPlayer;
 
     // Current Player Rect Portion
     public int playerPortion = 0;
@@ -33,13 +34,28 @@ public class CellMetaData : MonoBehaviour
         SetNextGameObj(otherPlayer, otherPlayer);
     }
 
+    public void SetPrevGameObj(GameObject otherPlayer, GameObject samePlayer)
+    {
+        prevObjOtherPlayer = otherPlayer;
+        prevObjSamePlayer = samePlayer;
+    }
+
+    public void SetPrevGameObj(GameObject otherPlayer)
+    {
+        SetPrevGameObj(otherPlayer, otherPlayer);
+    }
+    
     // Setting Next GameObject along with previous
     public void SetNextPrevGameObj(GameObject otherPlayer, GameObject samePlayer)
     {
         nextObjOtherPlayer = otherPlayer;
         nextObjSamePlayer = samePlayer;
-        otherPlayer.GetComponent<CellMetaData>().prevObj = this.gameObject;
-        samePlayer.GetComponent<CellMetaData>().prevObj = this.gameObject;
+        
+        otherPlayer.GetComponent<CellMetaData>().prevObjSamePlayer = this.gameObject;
+        otherPlayer.GetComponent<CellMetaData>().prevObjSamePlayer = this.gameObject;
+        samePlayer.GetComponent<CellMetaData>().prevObjOtherPlayer = this.gameObject;
+        samePlayer.GetComponent<CellMetaData>().prevObjOtherPlayer = this.gameObject;
+        
     }
 
     public void SetNextPrevGameObj(GameObject otherPlayer)
@@ -47,22 +63,33 @@ public class CellMetaData : MonoBehaviour
         SetNextPrevGameObj(otherPlayer, otherPlayer);
     }
 
-
     public GameObject GetNextGameObj(int player)
     {
         return player == playerPortion ? nextObjSamePlayer : nextObjOtherPlayer;
     }
-
+    
     public GameObject GetNextGameObj()
     {
         return nextObjOtherPlayer;
     }
 
+    public GameObject GetPrevGameObj(int player)
+    {
+        return player == playerPortion ? prevObjSamePlayer : prevObjOtherPlayer;
+    }
+
+    public GameObject GetPrevGameObj()
+    {
+        return prevObjOtherPlayer;
+    }
     // TODO 
     // Add power variables at later stages 
 
     public void AddPlayer(GameObject player)
     {
+        if (player == null || players.Contains(player))
+            return;
+        
         player.transform.parent = gameObject.transform;
         players.Add(player);
         // player.transform.localPosition = new Vector3(0, 0.5f, 0); 
@@ -77,6 +104,9 @@ public class CellMetaData : MonoBehaviour
 
     public void RemovePlayer(GameObject player)
     {
+        if (player == null || !players.Contains(player))
+            return;
+        
         players.Remove(player);
         
         player.transform.localScale = new Vector3(84, 84, 84);

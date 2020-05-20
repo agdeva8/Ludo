@@ -65,9 +65,6 @@ public static class RollDice
         // ClassObjects.Gameobj.mb.StopCoroutine(checkFallingRoutine);
         ClassObjects.Gameobj.mb.StopCoroutine(updateDiceValueRoutine);
         
-        // Stop home cell blinking
-        ClassObjects.Gameobj.homeOut[PossibleMoves.CurrPlayerTurn].GetComponent<Blink>().Stop();
-        
         // time for moving the pawns
         isRunning = false;
         PossibleMoves.Main();

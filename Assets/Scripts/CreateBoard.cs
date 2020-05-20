@@ -22,7 +22,7 @@ public class CreateBoard {
     private static GameObject board;
     private static Vector3[] startHomeCentroid;
     
-    // [MenuItem("Tools/Create Board/Players 4")]
+    [MenuItem("Tools/Create Board/Players 4")]
     public static void NPlayers4()
     {
         N = 4;
@@ -128,12 +128,13 @@ public class CreateBoard {
         PlacePiecesStart();
         CreateCenterPiece();
         // CheckMetaData();
+        AddPlayerPortion();
         RelateCells();
     }
 
     // Check Whether Meta Data concept is working or not 
     // For now its true;
-
+    
     private static void RelateCells()
     {
         // cells[0][2, 4].GetComponent<CellMetaData>().SetNextGameObj(cells[0][2, 3]);
@@ -161,9 +162,24 @@ public class CreateBoard {
             // Setting the way to go home
             cells[player][1, 5].GetComponent<CellMetaData>().SetNextPrevGameObj(cells[player][2, 5], cells[player][1, 4]);
             cells[player][1, 5].GetComponent<CellMetaData>().playerPortion = player;
+            
+            // Setting the prev game object for First Cell (after home cell)
+            // Null indicates that this is the first cell of home cell; 
+            cells[player][2, 4].GetComponent<CellMetaData>().SetPrevGameObj(cells[player][2, 5], null);
         }
     }
 
+    private static void AddPlayerPortion()
+    {
+        for (int player = 0; player < N; player++)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 6; j++)
+                    cells[player][i, j].GetComponent<CellMetaData>().playerPortion = player;
+            }
+        }
+    }
     // Move Piece using menu bar option
     // [MenuItem(itemName: "Tools/Move Player")]
     public static void MovePlayerFromMenu()

@@ -32,6 +32,8 @@ public class Blink : MonoBehaviour
 
     public void StartRoutine()
     {
+        if (objMaterial == null)
+            return;
 
         _coroutine = StartCoroutine(Routine());
     }
