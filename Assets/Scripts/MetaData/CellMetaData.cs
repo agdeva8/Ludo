@@ -122,7 +122,7 @@ public class CellMetaData : MonoBehaviour
         float y = player.transform.localPosition.y; 
         player.transform.localPosition = new Vector3(0, y, 0);
         
-        // RecalculateScalesPos();
+        RecalculateScalesPos();
     }
 
     public void RecalculateScalesPos()

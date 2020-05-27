@@ -11,4 +11,5 @@ public class PlayerMetaData : MonoBehaviour
 
     public int playerGroup;
     public int pawnNum;
+    public int distanceFromHome;
 }

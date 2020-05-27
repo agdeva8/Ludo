@@ -14,6 +14,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
     private int numMovesR;
     private int numMovesW;
 
+    private int distanceFromHome;
+
     public GameObject hc1;
     public GameObject hc2;
 
@@ -49,6 +51,8 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         if (photonView.IsMine)
         {
             numMovesW = 1;
+            distanceFromHome += numMovesW;
+            // playerMetaData.distanceFromHome = distanceFromHome;
             MoveRoutine();
         }
     }
@@ -64,23 +68,35 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         }
     }
 
-    // public override void OnEnable()
-    // {
-    //     base.OnEnable();
-    //     PhotonNetwork.AddCallbackTarget(this);
-    // }
-    //
-    // public override void OnDisable()
-    // {
-    //     base.OnDisable();
-    //     PhotonNetwork.RemoveCallbackTarget(this);
-    // }
-    
     private void smoothMovement()
     {
         if (numMovesR > 0)
             MoveRoutine();
         numMovesR = 0;
+
+        correctPlayerPos();
+    }
+
+    private void correctPlayerPos()
+    {
+        if (playerMetaData.distanceFromHome == distanceFromHome)
+            return;
+
+        GameObject currCell = playerMetaData.currCell;
+        GameObject newCell = currCell;
+        while (playerMetaData.distanceFromHome > distanceFromHome)
+        {
+            newCell = newCell.GetComponent<CellMetaData>().GetPrevGameObj();
+            playerMetaData.distanceFromHome--;
+        }
+        while (playerMetaData.distanceFromHome < distanceFromHome)
+        {
+            newCell = newCell.GetComponent<CellMetaData>().GetNextGameObj();
+            playerMetaData.distanceFromHome++;
+        }
+       
+        currCell.GetComponent<CellMetaData>().RemovePlayer(gameObject);
+        newCell.GetComponent<CellMetaData>().AddPlayer(gameObject);
     }
 
     private void ProcessInputs()
@@ -94,12 +110,14 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         {
             Debug.Log("writing to stream" + numMovesW);
             stream.SendNext(numMovesW);
+            stream.SendNext(distanceFromHome);
             numMovesW = 0;
             // stream.SendNext(transform.position);
         }
         else if (stream.IsReading)
         {
             numMovesR = (int) stream.ReceiveNext();
+            distanceFromHome = (int) stream.ReceiveNext();
             Debug.Log("Reading from stream" + numMovesR);
             // smoothMove = (Vector3) stream.ReceiveNext();
         }
@@ -115,5 +133,7 @@ public class MyPlayer : MonoBehaviourPun, IPunObservable
         
         if (nextCell != null)
             nextCell.GetComponent<CellMetaData>().AddPlayer(gameObject);
+
+        playerMetaData.distanceFromHome += 1;
     }
 }
