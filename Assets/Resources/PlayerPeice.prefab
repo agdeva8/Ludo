@@ -148,3 +148,4 @@ MonoBehaviour:
   homeCell: {fileID: 0}
   playerGroup: 0
   pawnNum: 0
+  distanceFromHome: 0
