@@ -23,6 +23,11 @@ public class CellMetaData : MonoBehaviour
 
     public List<GameObject> players;
 
+    private void Start()
+    {
+        players = new List<GameObject>();
+    }
+
     public void SetNextGameObj(GameObject otherPlayer, GameObject samePlayer)
     {
         nextObjOtherPlayer = otherPlayer;
@@ -88,8 +93,12 @@ public class CellMetaData : MonoBehaviour
     public void AddPlayer(GameObject player)
     {
         if (player == null || players.Contains(player))
+        {
+            Debug.Log("player is null");
             return;
-        
+        }
+
+        Debug.Log("Adding player"); 
         player.transform.parent = gameObject.transform;
         players.Add(player);
         // player.transform.localPosition = new Vector3(0, 0.5f, 0); 
@@ -113,7 +122,7 @@ public class CellMetaData : MonoBehaviour
         float y = player.transform.localPosition.y; 
         player.transform.localPosition = new Vector3(0, y, 0);
         
-        RecalculateScalesPos();
+        // RecalculateScalesPos();
     }
 
     public void RecalculateScalesPos()

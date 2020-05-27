@@ -44,23 +44,24 @@ public class GameObjects : MonoBehaviour
     // public GameObject[,] Players = new GameObject[8,4];
 
     [FormerlySerializedAs("NumPlayers")] public int numPlayers;
-    [FormerlySerializedAs("Players")] public GameObject[,] players;
+    [FormerlySerializedAs("Players")] public GameObject[,] players = new GameObject[4,4];
 
     [FormerlySerializedAs("HomeOut")] public GameObject[] homeOut;
     
     void Start()
     {
-        players = new GameObject[numPlayers,4];
+        // players = new GameObject[numPlayers,4];
 
-        debugPlayer2 = GameObject.Find("Player10");
-        
-        if (debugPlayer2 == null)
-            Debug.Log("Cant find Player");
-        
-        // Assigning Player Variables using Find
-        for (int i = 0; i < numPlayers; i++)
-            for (int j = 0; j < 4; j++)
-                players[i, j] = GameObject.Find($"Player{i}{j}"); 
+        // debugPlayer2 = GameObject.Find("Player10");
+        //
+        // if (debugPlayer2 == null)
+        //     Debug.Log("Cant find Player");
+        //
+        // // Assigning Player Variables using Find
+        // for (int i = 0; i < numPlayers; i++)
+        //     for (int j = 0; j < 4; j++)
+        //         if ( !(i == 0 && j == 0))
+        //             players[i, j] = GameObject.Find($"Player{i}{j}"); 
         
     }
     // public static void AssignPlayers()

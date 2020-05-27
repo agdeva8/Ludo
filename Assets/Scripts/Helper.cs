@@ -26,3 +26,9 @@ public static class Helper
         return false;
     }
 }
+
+[System.Serializable]
+public class MyArray
+{
+    public GameObject[] objects;
+}
