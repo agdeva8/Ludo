@@ -28,6 +28,9 @@
  * THE SOFTWARE.
  */
 
+using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -37,21 +40,24 @@ namespace Photon.Pun.Demo.PunBasics
 {
     public class GameManager : MonoBehaviourPunCallbacks
     {
+        public static GameManager GM;
         public GameObject winnerUI;
-        private GameObject ball;
-        
-        [SerializeField] private GameObject[,] players;
-        [SerializeField] private MyArray[] homeCells;
 
+        public int nextPlayerTeam;
+        
         [SerializeField] private GameObjects gameObjs;
 
-        public GameObject homeCell;
-
+        public MyArray[] homeCells;
         private GameObject _player;
+
+        [NonSerialized] public int groupNum;
+
         // Start Method
         void Start()
         {
-            players = gameObjs.players;
+            // initializing GM;
+            if (GM == null)
+                GM = this;
             
             if (!PhotonNetwork.IsConnected) // 1
             {
@@ -59,23 +65,25 @@ namespace Photon.Pun.Demo.PunBasics
                 return;
             }
 
-            if (PlayerManager.LocalPlayerInstance == null) 
+            if (_player == null)
             {
+                Debug.Log("Instantiating Player");
+                _player = InstPlayerPiece();
+                
                 if (PhotonNetwork.IsMasterClient) // 2
                 {
-                    Debug.Log("Instantiating Player 1");
 
                     // players[0, 0] = InstPlayerPiece(homeCells[0].objects[0]);
                     // InstPlayerPiece(homeCells[0].objects[0]);
-                    _player = InstPlayerPiece();
+                    // _player = InstPlayerPiece();
                     // _homeCell = GameObject.Find("StartHomeCell00");
                 }
                 else // 5
                 {
-                    Debug.Log("instantiating player 2");
+                    // Debug.Log("instantiating player 2");
                     // players[1, 0] = InstPlayerPiece(homeCells[1].objects[0]);
                     // InstPlayerPiece(homeCells[1].objects[0]);
-                    _player = InstPlayerPiece();
+                    // _player = InstPlayerPiece();
                     // _homeCell = GameObject.Find("StartHomeCell10");
                 }
                 // _player.GetComponent<CellMetaData>().AddPlayer(_player);
@@ -91,15 +99,11 @@ namespace Photon.Pun.Demo.PunBasics
         {
             GameObject player;
             player = PhotonNetwork.Instantiate("PlayerPeice", Vector3.zero, Quaternion.identity, 0);
-            
-            // // Setting player meta data
-            // player.GetComponent<PlayerMetaData>().currCell = homeCell;
-            // player.GetComponent<PlayerMetaData>().homeCell = homeCell;
-            //
-            // // setting cell meta data
-            // homeCell.GetComponent<CellMetaData>().players.Clear();
-            // homeCell.GetComponent<CellMetaData>().AddPlayer(player);
 
+            // PlayerMetaData playerMetaData = player.GetComponent<PlayerMetaData>();
+            //
+            // Debug.Log($"player group num is {groupNum}");
+            // playerMetaData.homeCell = homeCells[groupNum].objects[0];
             return player;
         }
       
@@ -129,6 +133,10 @@ namespace Photon.Pun.Demo.PunBasics
             Application.Quit();
         }
 
+        public void UpdateNextPlayerTeam()
+        {
+            nextPlayerTeam++;
+        }
 
     }
 }

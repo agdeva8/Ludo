@@ -28,6 +28,7 @@
  * THE SOFTWARE.
  */
 
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -69,7 +70,6 @@ namespace Photon.Pun.Demo.PunBasics
         string roomName = "";
 
         // Start Method
-// Start Method
         void Start() 
         {
             //1
@@ -140,7 +140,7 @@ namespace Photon.Pun.Demo.PunBasics
         }
 
         // Photon Methods
-        // Photon Methods
+
         public override void OnConnected()
         {
             // 1
@@ -154,6 +154,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         public override void OnDisconnected(DisconnectCause cause)
         {
+            base.OnDisconnected(cause);
             // 3
             isConnecting = false;
             controlPanel.SetActive(true);
@@ -175,9 +176,5 @@ namespace Photon.Pun.Demo.PunBasics
                 playerStatus.text = "Connected to Lobby";
             }
         }
-
-
-
-
     }
 }

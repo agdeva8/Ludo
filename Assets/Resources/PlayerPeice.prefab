@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5717327944238623835}
   - component: {fileID: 5759257548794844983}
   - component: {fileID: 757309460590134035}
+  - component: {fileID: 3087264441512322595}
   - component: {fileID: 5462362755666315594}
   - component: {fileID: 6733384298059013013}
   m_Layer: 0
@@ -30,7 +31,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5696640886763856077}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 5.43, y: 0.5, z: 0.49}
+  m_LocalPosition: {x: 5.43, y: 0.5, z: 0.537}
   m_LocalScale: {x: 63, y: 63, z: 90}
   m_Children: []
   m_Father: {fileID: 0}
@@ -106,10 +107,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c9d4180d9284e27a549bd0f5a99cb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  photonView: {fileID: 5462362755666315594}
+  myTeam: 0
+  PV: {fileID: 5462362755666315594}
+--- !u!114 &3087264441512322595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696640886763856077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be7d1889a2035448c9fe51e29957cad7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   playerMetaData: {fileID: 6733384298059013013}
-  hc1: {fileID: 0}
-  hc2: {fileID: 0}
+  PV: {fileID: 5462362755666315594}
 --- !u!114 &5462362755666315594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,7 +141,7 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 757309460590134035}
+  - {fileID: 3087264441512322595}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

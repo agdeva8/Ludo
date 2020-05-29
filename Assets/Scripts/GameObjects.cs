@@ -47,6 +47,9 @@ public class GameObjects : MonoBehaviour
     [FormerlySerializedAs("Players")] public GameObject[,] players = new GameObject[4,4];
 
     [FormerlySerializedAs("HomeOut")] public GameObject[] homeOut;
+
+    // This Gives us the array of homeCells;
+    public MyArray[] homeCells;
     
     void Start()
     {

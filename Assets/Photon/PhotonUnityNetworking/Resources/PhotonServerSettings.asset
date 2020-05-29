@@ -31,11 +31,13 @@ MonoBehaviour:
   RunInBackground: 1
   StartInOfflineMode: 0
   RpcList:
+  - ClickRpc
+  - DestroyRpc
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
-  - ClickRpc
-  - DestroyRpc
+  - RPC_GetTeam
+  - RPC_SentTeam
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
