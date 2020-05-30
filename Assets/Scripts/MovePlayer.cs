@@ -11,38 +11,51 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
 
     private int distanceFromHome;
 
-    private GameObject homeCell;
     private bool isRunning;
     public PhotonView PV;
     void Start()
     {
-        homeCell = playerMetaData.homeCell;
     }
 
     // Update is called once per frame
     public void OnMouseDown()
     {
+        // Debug.Log("is My turn is " + TurnManager.TM.isMyTurn); 
+        // if (!TurnManager.TM.isMyTurn)
+        // {
+        //     // Debug.Log("its not my turn");
+        //     return;
+        // }
+
         if (isRunning)
+        {
+            // Debug.Log("Move player running");
+            return;
+        }
+
+        if (!PV.IsMine)
             return;
         
-        if (PV.IsMine)
-        {
-            int diceNum = 6;
-            int interprettedDiceNum = InterpretDiceNum(diceNum);
+        if (!TurnManager.TM.CheckTurn())
+            return;
 
-            Debug.Log("interpretted Dice num is " + interprettedDiceNum);
-            List<GameObject> cellsList = FindCellList(interprettedDiceNum);
-            int distance = cellsList.Count - 1;
+        TurnManager.TM.StartTurn();
+        
+        int diceNum = 6;
+        int interprettedDiceNum = InterpretDiceNum(diceNum);
 
-            Debug.Log("Distance is " + distance);
-            // playerMetaData.distanceFromHome = distanceFromHome;
-            
-            // updating variables to be written 
-            numMoves = distance;
-            distanceFromHome += distance;
-            
-            MoveViaList(cellsList);
-        }
+        Debug.Log("interpretted Dice num is " + interprettedDiceNum);
+        List<GameObject> cellsList = FindCellList(interprettedDiceNum);
+        int distance = cellsList.Count - 1;
+
+        Debug.Log("Distance is " + distance);
+        // playerMetaData.distanceFromHome = distanceFromHome;
+        
+        // updating variables to be written 
+        numMoves = distance;
+        distanceFromHome += distance;
+        
+        MoveViaList(cellsList);
     }
 
     void Update()
@@ -207,6 +220,10 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
 
         playerMetaData.distanceFromHome += cellsCount - 1;
         correctPlayerPos();
+
+        if (PV.IsMine && TurnManager.TM.isMyTurn)
+            TurnManager.TM.EndTurn();
+        
         isRunning = false;
     }
     
@@ -232,7 +249,7 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
         int numMoves;
         GameObject currCell = playerMetaData.currCell;
         // TODO: Checking condition of three Sixes in One Go
-        if (currCell == homeCell)
+        if (currCell == playerMetaData.homeCell)
         {
             if (diceNum == 6)
                 numMoves = 1;

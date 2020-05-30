@@ -38,6 +38,8 @@ MonoBehaviour:
   - RespawnSpaceship
   - RPC_GetTeam
   - RPC_SentTeam
+  - RPC_SetUpdatedTurn
+  - RPC_UpdateTurn
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

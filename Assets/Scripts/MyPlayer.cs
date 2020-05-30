@@ -10,8 +10,8 @@ using UnityEngine.Experimental.XR;
 
 public class MyPlayer : MonoBehaviourPun
 {
-    public int myTeam;
     public PhotonView PV;
+    public int myTeam;
 
     void Start()
     {
@@ -44,7 +44,7 @@ public class MyPlayer : MonoBehaviourPun
     void MoveToBase()
     {
         Debug.Log("Adding player to home cell");
-        Debug.Log("Team number is " + myTeam);
+        Debug.Log($"Team number is {myTeam}");
         GameObject homeCell = ClassObjects.Gameobj.homeCells[myTeam].objects[0];
         homeCell.GetComponent<CellMetaData>().players.Clear();
         homeCell.GetComponent<CellMetaData>().AddPlayer(gameObject);
@@ -73,6 +73,13 @@ public class MyPlayer : MonoBehaviourPun
     {
         Debug.Log("in RPC Sent Team");
         myTeam = whichTeam;
+
+        if (PV.IsMine)
+        {
+            Debug.Log("my team is " + myTeam);
+            TurnManager.TM.myTeam = myTeam;
+        }
+        
         MoveToBase();
     }
 }
