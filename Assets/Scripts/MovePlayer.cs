@@ -230,7 +230,7 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
     public int InterpretDiceNum(int diceNum)
     {
         int numMoves;
-        GameObject currCell = playerMetaData.GetComponent<PlayerMetaData>().currCell;
+        GameObject currCell = playerMetaData.currCell;
         // TODO: Checking condition of three Sixes in One Go
         if (currCell == homeCell)
         {
