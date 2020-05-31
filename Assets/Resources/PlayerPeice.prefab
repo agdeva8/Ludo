@@ -109,6 +109,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PV: {fileID: 5462362755666315594}
   myTeam: 0
+  myPawn: 0
 --- !u!114 &3087264441512322595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,6 +123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerMetaData: {fileID: 6733384298059013013}
+  amAllowed: 0
   PV: {fileID: 5462362755666315594}
 --- !u!114 &5462362755666315594
 MonoBehaviour:

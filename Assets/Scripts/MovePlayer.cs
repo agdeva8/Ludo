@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class MovePlayer : MonoBehaviourPun, IPunObservable
 {
+    // MP is just used for debugging purpose
+    // Cant be used in development;
+    public static MovePlayer MP;
     public PlayerMetaData playerMetaData;
 
     private int numMoves;
@@ -12,21 +15,22 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
     private int distanceFromHome;
 
     private bool isRunning;
+    public bool amAllowed;
     public PhotonView PV;
     void Start()
     {
+        if (MP == null || MP != this)
+            MP = this;
     }
 
     // Update is called once per frame
     public void OnMouseDown()
     {
-        // Debug.Log("is My turn is " + TurnManager.TM.isMyTurn); 
-        // if (!TurnManager.TM.isMyTurn)
-        // {
-        //     // Debug.Log("its not my turn");
-        //     return;
-        // }
-
+        // This means I am not allowed to move 
+        // when user clicked
+        if (!amAllowed)
+            return;
+        
         if (isRunning)
         {
             // Debug.Log("Move player running");
@@ -36,10 +40,10 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
         if (!PV.IsMine)
             return;
         
-        if (!TurnManager.TM.CheckTurn())
-            return;
-
-        TurnManager.TM.StartTurn();
+        // Disallowing all other player to run because I am chosen
+        int myTeam = TurnManager.TM.myTeam;
+        for (int i = 0; i < 4; i++)
+            GameObjects.GO.players[myTeam, i].GetComponent<MovePlayer>().amAllowed = false;
         
         int diceNum = 6;
         int interprettedDiceNum = InterpretDiceNum(diceNum);
@@ -109,10 +113,10 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
 
     void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)	
     {
-        Debug.Log("On Photon Serialization");
+        // Debug.Log("On Photon Serialization");
         if (stream.IsWriting)
         {
-            Debug.Log($"writing to stream{numMoves}");
+            // Debug.Log($"writing to stream{numMoves}");
             stream.SendNext(numMoves);
             stream.SendNext(distanceFromHome);
         }
@@ -120,7 +124,7 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
         {
             numMoves = (int) stream.ReceiveNext();
             distanceFromHome = (int) stream.ReceiveNext();
-            Debug.Log("Reading from stream" + numMoves);
+            // Debug.Log("Reading from stream" + numMoves);
         }
     }
     
@@ -221,10 +225,13 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
         playerMetaData.distanceFromHome += cellsCount - 1;
         correctPlayerPos();
 
+        // Resetting local parameters
+        isRunning = false;
+        amAllowed = false;
+        
+        // Asking turn manager to end my client's turn
         if (PV.IsMine && TurnManager.TM.isMyTurn)
             TurnManager.TM.EndTurn();
-        
-        isRunning = false;
     }
     
     public Vector3 NewPiecePosition(GameObject cell)

@@ -12,40 +12,37 @@ public class MyPlayer : MonoBehaviourPun
 {
     public PhotonView PV;
     public int myTeam;
+    public int myPawn;
 
     void Start()
     {
-        // Asking for team number via rpc
+        // Assigning Pawn Number and Team number
         if (PV.IsMine)
-            PV.RPC("RPC_GetTeam", RpcTarget.MasterClient);
-        
-        // hc1 = GameObject.Find("StartHomeCell00");
-        // hc2 = GameObject.Find("StartHomeCell10");
-        
-        // if (photonView.IsMine)
-        // {
-        //     if (PhotonNetwork.IsMasterClient)
-        //         homeCell = hc1;
-        //     else
-        //         homeCell = hc2;
-        // }
-        // else
-        // {
-        //     if (PhotonNetwork.IsMasterClient)
-        //         homeCell = hc2;
-        //     else
-        //         homeCell = hc1;
-        // }
-
-        // // Debug.Log("Group Number is " + groupNum);
-        //
+        {
+            Debug.Log("Making Request for team number if not done");
+            // Asking for team number via RPC
+            if (!TurnManager.TM.teamNumRequested)
+            {
+                TurnManager.TM.teamNumRequested = true;
+                PV.RPC("RPC_GetTeam", RpcTarget.MasterClient);
+            }
+        }
     }
 
     void MoveToBase()
     {
         Debug.Log("Adding player to home cell");
         Debug.Log($"Team number is {myTeam}");
-        GameObject homeCell = ClassObjects.Gameobj.homeCells[myTeam].objects[0];
+        Debug.Log($"pawn number is {myPawn}");
+
+        if (myPawn == -1)
+            Debug.LogError("Pawn number for this instantiate is invalid: " +
+                           "must be a problem with team number");
+        
+        // Referencing this object in gameobects script;
+        GameObjects.GO.players[myTeam, myPawn] = gameObject;
+        
+        GameObject homeCell = ClassObjects.Gameobj.homeCells[myTeam].objects[myPawn];
         homeCell.GetComponent<CellMetaData>().players.Clear();
         homeCell.GetComponent<CellMetaData>().AddPlayer(gameObject);
         
@@ -53,7 +50,6 @@ public class MyPlayer : MonoBehaviourPun
         playerMetaData.homeCell = homeCell;
         playerMetaData.currCell = homeCell;
     }
-
 
     // RPC Methads
     // This RPC will only be called on master client
@@ -72,14 +68,49 @@ public class MyPlayer : MonoBehaviourPun
     void RPC_SentTeam(int whichTeam)
     {
         Debug.Log("in RPC Sent Team");
-        myTeam = whichTeam;
 
         if (PV.IsMine)
         {
-            Debug.Log("my team is " + myTeam);
-            TurnManager.TM.myTeam = myTeam;
+            TurnManager.TM.myTeam = whichTeam;
+            for (int i = 0; i < 4; i++)
+            {
+                GameManager.GM.players[i].GetComponent<MyPlayer>().SetTeamNPawn(whichTeam, i);
+            }
         }
-        
+    }
+
+    void SetTeamNPawn(int teamNum, int pawnNum)
+    {
+        PV.RPC("RPC_SentTeamNPawn", RpcTarget.AllBuffered, teamNum, pawnNum);
+    }
+    
+    // Now Getting Pawn number from RPC methods
+    // This RPC will only be called on master client
+    [PunRPC]
+    void RPC_GetPawn(int teamNum)
+    {
+        Debug.Log("in RPC Get Pawn");
+        int pawnNum = GameManager.GM.GetPawn(teamNum); 
+        PV.RPC("RPC_SentPawn", RpcTarget.AllBuffered, pawnNum);
+    }
+    
+    
+    // Pawn Number will be broadcasted via this 
+    [PunRPC]
+    void RPC_SentPawn(int whichPawn)
+    {
+        Debug.Log("in RPC Sent Pawn");
+        myPawn = whichPawn;
+        MoveToBase();
+    }
+    
+    // Team and Pawn Number will be broadcasted via this 
+    [PunRPC]
+    void RPC_SentTeamNPawn(int whichTeam, int whichPawn)
+    {
+        Debug.Log("in RPC Sent Pawn");
+        myTeam = whichTeam;
+        myPawn = whichPawn;
         MoveToBase();
     }
 }

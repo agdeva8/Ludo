@@ -48,9 +48,12 @@ namespace Photon.Pun.Demo.PunBasics
         [SerializeField] private GameObjects gameObjs;
 
         public MyArray[] homeCells;
-        private GameObject _player;
+        public GameObject[] players;
 
         [NonSerialized] public int groupNum;
+
+        private int numOnlinePlayers;
+        private int[] pawnNums;
 
         // Start Method
         void Start()
@@ -64,31 +67,34 @@ namespace Photon.Pun.Demo.PunBasics
                 SceneManager.LoadScene("Launcher");
                 return;
             }
-
-            if (_player == null)
-            {
-                Debug.Log("Instantiating Player");
-                _player = InstPlayerPiece();
-                
-                if (PhotonNetwork.IsMasterClient) // 2
-                {
-
-                    // players[0, 0] = InstPlayerPiece(homeCells[0].objects[0]);
-                    // InstPlayerPiece(homeCells[0].objects[0]);
-                    // _player = InstPlayerPiece();
-                    // _homeCell = GameObject.Find("StartHomeCell00");
-                }
-                else // 5
-                {
-                    // Debug.Log("instantiating player 2");
-                    // players[1, 0] = InstPlayerPiece(homeCells[1].objects[0]);
-                    // InstPlayerPiece(homeCells[1].objects[0]);
-                    // _player = InstPlayerPiece();
-                    // _homeCell = GameObject.Find("StartHomeCell10");
-                }
-                // _player.GetComponent<CellMetaData>().AddPlayer(_player);
-            }
             
+            players = new GameObject[4];
+
+            Debug.Log("Instantiating Player");
+
+            // Instantiating four pieces
+            // One per pawn;
+            for (int i = 0; i < 4; i++)
+                players[i] = InstPlayerPiece();
+
+            if (PhotonNetwork.IsMasterClient) // 2
+            {
+
+                // players[0, 0] = InstPlayerPiece(homeCells[0].objects[0]);
+                // InstPlayerPiece(homeCells[0].objects[0]);
+                // _player = InstPlayerPiece();
+                // _homeCell = GameObject.Find("StartHomeCell00");
+            }
+            else // 5
+            {
+                // Debug.Log("instantiating player 2");
+                // players[1, 0] = InstPlayerPiece(homeCells[1].objects[0]);
+                // InstPlayerPiece(homeCells[1].objects[0]);
+                // _player = InstPlayerPiece();
+                // _homeCell = GameObject.Find("StartHomeCell10");
+            }
+            // _player.GetComponent<CellMetaData>().AddPlayer(_player);
+
             // Starting the game
                 
             Application.targetFrameRate = 30;
@@ -97,6 +103,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         GameObject InstPlayerPiece()
         {
+            Debug.Log("instantiating player");
             GameObject player;
             player = PhotonNetwork.Instantiate("PlayerPeice", Vector3.zero, Quaternion.identity, 0);
 
@@ -138,5 +145,22 @@ namespace Photon.Pun.Demo.PunBasics
             nextPlayerTeam++;
         }
 
+        public int GetPawn(int teamNum)
+        {
+            if (numOnlinePlayers == 0)
+                numOnlinePlayers = TurnManager.TM.GetNumOnlinePlayers();
+            
+            if (pawnNums == null)
+                pawnNums = new int[numOnlinePlayers];
+            
+            if (teamNum < 0 || teamNum >= numOnlinePlayers)
+            {
+                Debug.LogError("GM: GetPawn: Team number is sent incorrect " + teamNum);
+                return - 1;
+            }
+
+            pawnNums[teamNum]++;
+            return pawnNums[teamNum] - 1;
+        }
     }
 }

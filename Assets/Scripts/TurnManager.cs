@@ -14,29 +14,22 @@ public class TurnManager : MonoBehaviourPun
     
     public bool running;
     
-    private int prevTeam;
+    public int prevTeam;
     private bool firstTurn;
-    
+    public bool teamNumRequested;
+
     // Start is called before the first frame update
     void Start()
     {
         if (TM == null || TM != this)
             TM = this;
 
-        prevTeam = -1;
-        UpdateNumOnlinePlayers();
+        numberOnlinePlayers = GetNumOnlinePlayers();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // if (!firstTurn)
-        // {
-        //     Debug.Log("it is a first turn");
-        //     firstTurn = true;
-        //     UpdateNumOnlinePlayers();
-        //     // CheckTurn();
-        // }
     }
 
     public bool CheckTurn()
@@ -82,10 +75,11 @@ public class TurnManager : MonoBehaviourPun
         PV.RPC("RPC_UpdateTurn", RpcTarget.MasterClient);
     }
 
-    void UpdateNumOnlinePlayers()
+    public int GetNumOnlinePlayers()
     {
         if (PhotonNetwork.InRoom)
-            numberOnlinePlayers = PhotonNetwork.CurrentRoom.PlayerCount;
+            return PhotonNetwork.CurrentRoom.PlayerCount;
+        return -1;
     }
 
     // Only Master Client will be able to execute this 

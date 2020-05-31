@@ -17,6 +17,8 @@ using UnityEngine.Serialization;
 /// </summary>
 public class GameObjects : MonoBehaviour
 {
+    public static GameObjects GO;
+    
     // TODO: change name from DiceNUm to DiceNum
     // DiceNum GameObject
     [FormerlySerializedAs("DiceNum")] public GameObject diceNum;
@@ -35,11 +37,6 @@ public class GameObjects : MonoBehaviour
     // public static MonoBehaviour MB = MonoB.AddComponent<MonoBehaviour>();
     [FormerlySerializedAs("MB")] public MonoBehaviour mb;
     
-    // Player to check if the code is running 
-    [FormerlySerializedAs("DebugPlayer")] public GameObject debugPlayer;
-    
-    [FormerlySerializedAs("DebugPlayer2")] public GameObject debugPlayer2;
-    
     // Player Pieces Array
     // public GameObject[,] Players = new GameObject[8,4];
 
@@ -53,6 +50,7 @@ public class GameObjects : MonoBehaviour
     
     void Start()
     {
+        GO = this;
         // players = new GameObject[numPlayers,4];
 
         // debugPlayer2 = GameObject.Find("Player10");
@@ -65,7 +63,7 @@ public class GameObjects : MonoBehaviour
         //     for (int j = 0; j < 4; j++)
         //         if ( !(i == 0 && j == 0))
         //             players[i, j] = GameObject.Find($"Player{i}{j}"); 
-        
+
     }
     // public static void AssignPlayers()
     // {
