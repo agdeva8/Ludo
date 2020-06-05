@@ -8,7 +8,9 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
     // MP is just used for debugging purpose
     // Cant be used in development;
     public static MovePlayer MP;
+    public GameObject player;
     public PlayerMetaData playerMetaData;
+    public LastCellMechanics lastCellMechanics;
 
     private int numMoves;
 
@@ -103,8 +105,8 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
             playerMetaData.distanceFromHome++;
         }
        
-        currCell.GetComponent<CellMetaData>().RemovePlayer(gameObject);
-        newCell.GetComponent<CellMetaData>().AddPlayer(gameObject);
+        currCell.GetComponent<CellMetaData>().RemovePlayer(player);
+        newCell.GetComponent<CellMetaData>().AddPlayer(player);
     }
 
     private void ProcessInputs()
@@ -157,7 +159,6 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
 
     public IEnumerator MoveRoutine(List<GameObject> cellsList)
     {
-        GameObject player = gameObject;
         Debug.Log("Showing Move Routine");
         isRunning = true;
         
@@ -224,7 +225,14 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
 
         playerMetaData.distanceFromHome += cellsCount - 1;
         correctPlayerPos();
-
+        
+        // Now Starting last cell mechanics 
+        lastCellMechanics.Main();
+        
+        // Waiting for last cell mechanics to get over
+        while (lastCellMechanics.IsRunning())
+            yield return 0.01;
+        
         // Resetting local parameters
         isRunning = false;
         amAllowed = false;

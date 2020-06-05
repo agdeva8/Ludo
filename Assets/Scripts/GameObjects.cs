@@ -18,7 +18,7 @@ using UnityEngine.Serialization;
 public class GameObjects : MonoBehaviour
 {
     public static GameObjects GO;
-    
+
     // TODO: change name from DiceNUm to DiceNum
     // DiceNum GameObject
     [FormerlySerializedAs("DiceNum")] public GameObject diceNum;

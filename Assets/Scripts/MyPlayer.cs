@@ -39,6 +39,9 @@ public class MyPlayer : MonoBehaviourPun
             Debug.LogError("Pawn number for this instantiate is invalid: " +
                            "must be a problem with team number");
         
+        // Setting player color according to team number
+        Helper.ChangeColor(gameObject, CustomizedVars.CV.playerColors[myTeam]);
+        
         // Referencing this object in gameobects script;
         GameObjects.GO.players[myTeam, myPawn] = gameObject;
         

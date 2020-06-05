@@ -25,6 +25,12 @@ public static class Helper
 
         return false;
     }
+    
+    // Change color of the given object
+    public static void ChangeColor(GameObject obj, Color color) {
+        var cubeRenderer = obj.GetComponent<Renderer>();
+        cubeRenderer.material.SetColor("_Color", color);
+    }
 }
 
 [System.Serializable]
@@ -32,3 +38,4 @@ public class MyArray
 {
     public GameObject[] objects;
 }
+
