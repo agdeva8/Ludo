@@ -25,6 +25,7 @@ public class TurnManager : MonoBehaviourPun
             TM = this;
 
         numberOnlinePlayers = GetNumOnlinePlayers();
+        GameObjects.GO.homeOut[currTeamTurn].GetComponent<Blink>().StartRoutine();
     }
 
     // Update is called once per frame
@@ -99,7 +100,10 @@ public class TurnManager : MonoBehaviourPun
         Debug.Log("Curr team is " + currTeamTurn);
         prevTeam = currTeamTurn;
         currTeamTurn = currTeam;
+        
+        // Change blinking
+        GameObjects.GO.homeOut[prevTeam].GetComponent<Blink>().Stop();
+        GameObjects.GO.homeOut[currTeamTurn].GetComponent<Blink>().StartRoutine();
 
-        // CheckTurn();
     }
 }

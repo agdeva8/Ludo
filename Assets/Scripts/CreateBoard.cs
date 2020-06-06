@@ -501,7 +501,7 @@ public class CreateBoard {
                 PlayerMetaData playerMetaData = playerPieces[player, i].GetComponent<PlayerMetaData>();
                 playerMetaData.currCell = startHomeCells[player, i];
                 playerMetaData.homeCell = startHomeCells[player, i];
-                playerMetaData.playerGroup = player;
+                playerMetaData.myTeam = player;
                 playerMetaData.pawnNum = i;
                 
                 startHomeCells[player, i].GetComponent<CellMetaData>().AddPlayer(playerPieces[player, i]);

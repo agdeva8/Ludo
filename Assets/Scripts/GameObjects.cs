@@ -21,7 +21,7 @@ public class GameObjects : MonoBehaviour
 
     // TODO: change name from DiceNUm to DiceNum
     // DiceNum GameObject
-    [FormerlySerializedAs("DiceNum")] public GameObject diceNum;
+    // [FormerlySerializedAs("DiceNum")] public GameObject diceNum;
     // Main Mesh of the DiceNum object
     [FormerlySerializedAs("DiceScore")] public TextMeshProUGUI diceScore;
         // DiceNum.GetComponent<TextMeshProUGUI>();

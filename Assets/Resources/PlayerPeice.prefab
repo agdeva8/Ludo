@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 757309460590134035}
   - component: {fileID: 6733384298059013013}
   - component: {fileID: 3087264441512322595}
+  - component: {fileID: 114655999818430632}
   - component: {fileID: 659744930540412583}
   - component: {fileID: 5462362755666315594}
   m_Layer: 0
@@ -109,6 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PV: {fileID: 5462362755666315594}
+  playerMetaData: {fileID: 6733384298059013013}
   myTeam: 0
   myPawn: 0
 --- !u!114 &6733384298059013013
@@ -125,7 +127,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currCell: {fileID: 0}
   homeCell: {fileID: 0}
-  playerGroup: 0
+  myTeam: 0
+  myPawn: 0
   pawnNum: 0
   distanceFromHome: 0
 --- !u!114 &3087264441512322595
@@ -143,8 +146,27 @@ MonoBehaviour:
   player: {fileID: 5696640886763856077}
   playerMetaData: {fileID: 6733384298059013013}
   lastCellMechanics: {fileID: 659744930540412583}
-  amAllowed: 0
+  possibleMoves: {fileID: 114655999818430632}
+  amAllowed: 1
   PV: {fileID: 5462362755666315594}
+--- !u!114 &114655999818430632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696640886763856077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63b638bf00fd6462b8fbcbf2460ff315, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cellsList: []
+  playerMetaData: {fileID: 6733384298059013013}
+  movePlayer: {fileID: 3087264441512322595}
+  diceNum: 0
+  interpretedDiceNum: 0
+  distance: 0
 --- !u!114 &659744930540412583
 MonoBehaviour:
   m_ObjectHideFlags: 0

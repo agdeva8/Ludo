@@ -11,6 +11,7 @@ using UnityEngine.Experimental.XR;
 public class MyPlayer : MonoBehaviourPun
 {
     public PhotonView PV;
+    public PlayerMetaData playerMetaData;
     public int myTeam;
     public int myPawn;
 
@@ -40,7 +41,7 @@ public class MyPlayer : MonoBehaviourPun
                            "must be a problem with team number");
         
         // Setting player color according to team number
-        Helper.ChangeColor(gameObject, CustomizedVars.CV.playerColors[myTeam]);
+        Helper.ChangeColor(gameObject, CustomizedVars.CV.playerColors[myTeam] );
         
         // Referencing this object in gameobects script;
         GameObjects.GO.players[myTeam, myPawn] = gameObject;
@@ -114,6 +115,12 @@ public class MyPlayer : MonoBehaviourPun
         Debug.Log("in RPC Sent Pawn");
         myTeam = whichTeam;
         myPawn = whichPawn;
+        
+        // Adding this info to player meta data
+        playerMetaData.myTeam = myTeam;
+        playerMetaData.myPawn = myPawn;
+        
+        // Now moving to base;
         MoveToBase();
     }
 }

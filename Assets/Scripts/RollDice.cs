@@ -108,8 +108,27 @@ public class RollDice : MonoBehaviour
         // Letting Move Player script is do its job
         int myTeam = TurnManager.TM.myTeam;
 
+        // Checking for possible moves for each team
         for (int i = 0; i < 4; i++)
-            GameObjects.GO.players[myTeam, i].GetComponent<MovePlayer>().amAllowed = true;
+            GameObjects.GO.players[myTeam, i].GetComponent<PossibleMoves>().Main();
+        
+        // Now checking if possible moves is allowed or not 
+        int numValidPawns = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            if (GameObjects.GO.players[myTeam, i].GetComponent<PossibleMoves>().IsValid())
+            {
+                GameObjects.GO.players[myTeam, i].GetComponent<MovePlayer>().amAllowed = true;
+                numValidPawns++;
+            }
+        }
+        
+        if (numValidPawns == 0)
+            TurnManager.TM.EndTurn();
+
+        // It will be good to add possible moves here
+        // to see whether allowed or not has to be done // for (int i = 0; i < 4; i++)
+        //     GameObjects.GO.players[myTeam, i].GetComponent<MovePlayer>().amAllowed = true;
         // PossibleMoves.Main();
     }
 }

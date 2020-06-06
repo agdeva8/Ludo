@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
+using TMPro;
 using UnityEngine;
 
 public class MovePlayer : MonoBehaviourPun, IPunObservable
@@ -11,7 +13,8 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
     public GameObject player;
     public PlayerMetaData playerMetaData;
     public LastCellMechanics lastCellMechanics;
-
+    public PossibleMoves possibleMoves;
+    
     private int numMoves;
 
     private int distanceFromHome;
@@ -46,12 +49,8 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
         int myTeam = TurnManager.TM.myTeam;
         for (int i = 0; i < 4; i++)
             GameObjects.GO.players[myTeam, i].GetComponent<MovePlayer>().amAllowed = false;
-        
-        int diceNum = 6;
-        int interprettedDiceNum = InterpretDiceNum(diceNum);
 
-        Debug.Log("interpretted Dice num is " + interprettedDiceNum);
-        List<GameObject> cellsList = FindCellList(interprettedDiceNum);
+        List<GameObject> cellsList = possibleMoves.cellsList; 
         int distance = cellsList.Count - 1;
 
         Debug.Log("Distance is " + distance);
@@ -129,26 +128,12 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
             // Debug.Log("Reading from stream" + numMoves);
         }
     }
-    
-    public void MoveViaDice(int diceNum)
-    {
-        // This case will not happen in lifetime
-        // Can only happen forcefully for debugging purpose
-        if (diceNum < 1)
-            return;
-        
-        int interprettedDiceNum = InterpretDiceNum(diceNum);
-        List<GameObject> cellsList = FindCellList(interprettedDiceNum);
-        int distance = cellsList.Count;
-        
-        MoveViaList(cellsList);
-    }
 
     public void MoveViaDist(int distance)
     {
         if (distance < 1)
             return;
-        List<GameObject> cellsList = FindCellList(distance);
+        List<GameObject> cellsList = possibleMoves.FindCellList(distance);
         MoveViaList(cellsList);
     }
 
@@ -207,14 +192,6 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
             currStep++;
         }
 
-        // // Last Cell Mechanics
-        lastCell.GetComponent<CellMetaData>().AddPlayer(player);
-        // LastCellMechanics.Main(Player, lastCell);
-        
-        // Wating for all defeated pawns to go back to their home
-        // while (LastCellMechanics.IsRunning())
-        //     yield return new WaitForSeconds(0.01f);
-        
         // Stop home cell blinking
         // ClassObjects.Gameobj.homeOut[PossibleMoves.CurrPlayerTurn].GetComponent<Blink>().Stop();
         
@@ -225,6 +202,9 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
 
         playerMetaData.distanceFromHome += cellsCount - 1;
         correctPlayerPos();
+        
+        // changing curr cell
+        playerMetaData.currCell = lastCell;
         
         // Now Starting last cell mechanics 
         lastCellMechanics.Main();
@@ -259,41 +239,4 @@ public class MovePlayer : MonoBehaviourPun, IPunObservable
 
      // Mapping from what the number is and what it will be interpetted
     // according to the rules
-    public int InterpretDiceNum(int diceNum)
-    {
-        int numMoves;
-        GameObject currCell = playerMetaData.currCell;
-        // TODO: Checking condition of three Sixes in One Go
-        if (currCell == playerMetaData.homeCell)
-        {
-            if (diceNum == 6)
-                numMoves = 1;
-            else
-                numMoves = 0;
-        }
-        else
-            numMoves = diceNum;
-
-        return numMoves;
-    }
-    
-    // It will give the whole path and also what the actual distance 
-    // It has travelled given all the restrictions
-    public List<GameObject> FindCellList(int numMoves)
-    {
-        int playerGroup = playerMetaData.playerGroup;
-        GameObject currCell = playerMetaData.currCell;
-        GameObject nextCell;
-
-        List<GameObject> cellsList = new List<GameObject>();
-        int i = 0;
-        while (i <= numMoves && currCell != null)
-        {
-            cellsList.Add(currCell);
-            nextCell = currCell.GetComponent<CellMetaData>().GetNextGameObj(playerGroup);
-            currCell = nextCell;
-            i++;
-        }
-        return cellsList;
-    }
 }

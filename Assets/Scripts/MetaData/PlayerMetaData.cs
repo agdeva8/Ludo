@@ -9,7 +9,8 @@ public class PlayerMetaData : MonoBehaviour
     public GameObject currCell;
     public GameObject homeCell;
 
-    public int playerGroup;
+    public int myTeam;
+    public int myPawn;
     public int pawnNum;
     public int distanceFromHome;
 }

@@ -13,6 +13,7 @@ public class LastCellMechanics : MonoBehaviour
 
     public void Main()
     {
+        Debug.Log("in last cell mechanics");
         runningProcesses = 1;
         cell = playerMetaData.currCell;
 
@@ -22,6 +23,7 @@ public class LastCellMechanics : MonoBehaviour
         // Handling cases where only need to be Added 
         if (cellMetaData.isStop || currPlayers.Count == 0)
         {
+            Debug.Log("Simply adding the player");
             cellMetaData.AddPlayer(player);
             runningProcesses--;
             return;
@@ -31,14 +33,14 @@ public class LastCellMechanics : MonoBehaviour
         // so as to decide whether to kick the player or not
         int[] playerGroupCount = new int[4];
         foreach (GameObject currPlayer in currPlayers)
-            playerGroupCount[currPlayer.GetComponent<PlayerMetaData>().playerGroup]++;
+            playerGroupCount[currPlayer.GetComponent<PlayerMetaData>().myTeam]++;
 
         List<GameObject> defeatedPlayers = new List<GameObject>();
         foreach (GameObject currPlayer in currPlayers)
         {
-            int currPlayerGroup = currPlayer.GetComponent<PlayerMetaData>().playerGroup;
+            int currPlayerGroup = currPlayer.GetComponent<PlayerMetaData>().myTeam;
 
-            if (playerMetaData.playerGroup == currPlayerGroup)
+            if (playerMetaData.myTeam == currPlayerGroup)
                 continue;
             if (playerGroupCount[currPlayerGroup] % 2 == 0)
                 continue;
@@ -82,7 +84,7 @@ public class LastCellMechanics : MonoBehaviour
                 
                                                                 desiredPosition, 1);
 
-            currCell = currCell.GetComponent<CellMetaData>().GetPrevGameObj(defeatedPMetaData.playerGroup);
+            currCell = currCell.GetComponent<CellMetaData>().GetPrevGameObj(defeatedPMetaData.myTeam);
 
             if (currCell == null)
                 currCell = homeCell;
