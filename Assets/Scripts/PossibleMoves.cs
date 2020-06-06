@@ -26,11 +26,6 @@ public class PossibleMoves : MonoBehaviour
         cellsList = new List<GameObject>();
         myTeam = TurnManager.TM.myTeam;
 
-        if (myTeam == 0)
-            interpretedDiceNum = 6;
-        else
-            interpretedDiceNum = 1;
-
         cellsList = FindCellList(interpretedDiceNum);
         distance = cellsList.Count;
     }
@@ -42,14 +37,14 @@ public class PossibleMoves : MonoBehaviour
         int numMoves;
         GameObject currCell = playerMetaData.currCell;
         // TODO: Checking condition of three Sixes in One Go
-        // if (currCell == playerMetaData.homeCell)
-        // {
-        //     if (diceNum == 6)
-        //         numMoves = 1;
-        //     else
-        //         numMoves = 0;
-        // }
-        // else
+        if (currCell == playerMetaData.homeCell)
+        {
+            if (diceNum == 6)
+                numMoves = 1;
+            else
+                numMoves = 0;
+        }
+        else
             numMoves = diceNum;
 
         return numMoves;
